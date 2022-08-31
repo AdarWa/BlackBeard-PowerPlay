@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOpDrive;
+package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 
 @TeleOp
-public class TeleOpDrive extends LinearOpMode {
+public class PowerPlayOpMode extends LinearOpMode {
 
     enum DriveMode {
         JokerDrive,
