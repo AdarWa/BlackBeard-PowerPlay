@@ -29,10 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
 /**
@@ -52,31 +57,36 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class AutonomousOpMode extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+    private SampleMecanumDrive drive;
 
-    private DcMotor frontRight;
-    private DcMotor frontLeft;
-    private DcMotor backRight;
-    private DcMotor backLeft;
-
+    private static final Pose2d startPosition = new Pose2d(0,0,0);
+    private Pose2d lastPosition = startPosition;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        backRight = hardwareMap.dcMotor.get("backRight");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-
         waitForStart();
         runtime.reset();
 
-        while (opModeIsActive()) {
+        drive = new SampleMecanumDrive(hardwareMap);
 
+        waitForStart();
+        lineTo(new Vector2d(10,10));
+        try {Thread.sleep(5000);} catch (InterruptedException e) {e.printStackTrace();}
+        splineTo(new Vector2d(20,15), 90);
+    }
 
-            telemetry.addData("Time", runtime.toString());
-            telemetry.update();
-        }
+    private Trajectory lineTo(Vector2d pos){
+        return drive.trajectoryBuilder(lastPosition)
+                .lineTo(pos)
+                .build();
+    }
+
+    private Trajectory splineTo(Vector2d pos, double heading){
+        return drive.trajectoryBuilder(lastPosition)
+                .splineTo(pos,heading)
+                .build();
     }
 }
