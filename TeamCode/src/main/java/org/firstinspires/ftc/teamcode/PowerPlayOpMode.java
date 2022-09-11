@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
@@ -17,6 +18,12 @@ public class PowerPlayOpMode extends LinearOpMode {
     private Motor frontLeft, frontRight, backLeft,backRight;
     private Drive drive;
     private GamepadEx driver;
+    private GamepadEx operator;
+
+    private Servo intakeServo1;
+    private Servo intakeServo2;
+
+    private IntakePrototype1 intake;
 
 
 
@@ -28,19 +35,27 @@ public class PowerPlayOpMode extends LinearOpMode {
         backLeft = new Motor(hardwareMap,"backLeft");
         backRight = new Motor(hardwareMap,"backRight");
 
+        intakeServo1 = hardwareMap.servo.get("intakeServo1");
+        intakeServo2 = hardwareMap.servo.get("intakeServo2");
+
 
         driver = new GamepadEx(gamepad1);
+        operator = new GamepadEx(gamepad2);
 
 
         IMU imu = new IMU(hardwareMap);
 
         drive = new Drive(driver,imu,telemetry,frontLeft,frontRight,backLeft,backRight);
 
+        intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
+
+
         waitForStart();
 
 
         while(opModeIsActive()){
             drive.update();
+            intake.controlMechanism();
         }
 
     }
