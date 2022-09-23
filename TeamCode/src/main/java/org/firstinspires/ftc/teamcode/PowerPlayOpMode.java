@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
+import org.firstinspires.ftc.teamcode.subsystems.FlipIntake;
+import org.firstinspires.ftc.teamcode.subsystems.LiftPrototype;
 
 @TeleOp
 public class PowerPlayOpMode extends LinearOpMode {
@@ -25,15 +27,19 @@ public class PowerPlayOpMode extends LinearOpMode {
 
     private IntakePrototype1 intake;
 
+    private FlipIntake flipIntake;
+
+    private LiftPrototype lift;
+
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         frontLeft = new Motor(hardwareMap,"frontLeft");
-        frontRight = new Motor(hardwareMap,"frontRight");
-        backLeft = new Motor(hardwareMap,"backLeft");
-        backRight = new Motor(hardwareMap,"backRight");
+            frontRight = new Motor(hardwareMap,"frontRight");
+                backLeft = new Motor(hardwareMap,"backLeft");
+                    backRight = new Motor(hardwareMap,"backRight");
 
         intakeServo1 = hardwareMap.servo.get("intakeServo1");
         intakeServo2 = hardwareMap.servo.get("intakeServo2");
@@ -49,6 +55,11 @@ public class PowerPlayOpMode extends LinearOpMode {
 
         intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
 
+        flipIntake = new FlipIntake(operator, hardwareMap);
+
+        lift = new LiftPrototype(operator, hardwareMap, this);
+
+
 
         waitForStart();
 
@@ -56,6 +67,8 @@ public class PowerPlayOpMode extends LinearOpMode {
         while(opModeIsActive()){
             drive.update();
             intake.controlMechanism();
+            flipIntake.intakeControl();
+            lift.controlLift();
         }
 
     }

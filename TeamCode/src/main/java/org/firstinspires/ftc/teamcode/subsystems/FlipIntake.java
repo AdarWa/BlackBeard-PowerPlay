@@ -1,32 +1,30 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-
-public class Intake {
+public class FlipIntake {
 
     private GamepadEx operator;
 
     private DcMotorEx intakeMotor;
-    private Servo upDownServo;
+    private Servo flipServo;
 
-    public Intake(GamepadEx operator, HardwareMap hardwareMap){
+    public FlipIntake(GamepadEx operator, HardwareMap hardwareMap){
         this.operator = operator;
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakeMotor");
-        upDownServo = hardwareMap.servo.get("upDownServo");
+        flipServo = hardwareMap.servo.get("upDownServo");
     }
 
     public void intakeControl(){
         intakeMotor.setPower(operator.getLeftY());
-        if(intakeMotor.getCurrent(CurrentUnit.MILLIAMPS) >= 600){
-            sleep(300);
-            upDownServo.setPosition(1);
-            sleep(700);
-            upDownServo.setPosition(0);
+        if(operator.getButton(GamepadKeys.Button.X)){
+            flipServo.setPosition(1);
+        }else{
+            flipServo.setPosition(0);
         }
     }
 
