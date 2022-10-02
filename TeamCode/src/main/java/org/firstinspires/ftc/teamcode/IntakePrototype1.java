@@ -17,18 +17,19 @@ public class IntakePrototype1 {
 
     private boolean servoState;
 
-    public IntakePrototype1(Servo servo1, Servo servo2, GamepadEx operator){
+    public IntakePrototype1(Servo servo1, Servo servo2, GamepadEx operator) {
         this.servo1 = servo1;
         this.servo2 = servo2;
         this.operator = operator;
     }
 
-    public void controlMechanism(){
-        if(operator.wasJustPressed(intakeButton)){
+    public void controlMechanism() {
+        if (operator.wasJustPressed(intakeButton)) {
             servo1.setPosition(servoState ? 0 : 1);
             servo2.setPosition(servoState ? 0 : 1);
             servoState = !servoState;
         }
     }
-
 }
+
+

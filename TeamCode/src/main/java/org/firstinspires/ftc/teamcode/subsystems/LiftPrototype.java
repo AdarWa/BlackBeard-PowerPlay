@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class LiftPrototype {
 
     enum Junction{
-        Ground(5),
-        Low(10),
-        Mid(15),
-        High(20);
+        Ground(0),
+        Low(0),
+        Mid(0),
+        High(0);
 
         private int i;
 
@@ -34,6 +34,7 @@ public class LiftPrototype {
         this.operator = operator;
         this.liftMotor = hardwareMap.dcMotor.get("liftMotor");
         this.opMode = opMode;
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void controlLift(){
@@ -51,7 +52,6 @@ public class LiftPrototype {
     }
 
     private void goToJunc(Junction junction){
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setTargetPosition(junction.getTicks());
         liftMotor.setPower(1);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

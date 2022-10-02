@@ -37,7 +37,10 @@ public class BackAndForth extends LinearOpMode {
 
         Trajectory trajectorySplineTo = drive.trajectoryBuilder(new Pose2d(15,15, 0))
                 .splineTo(new Vector2d(30,15),90)
+
+                .lineTo(new Vector2d(40, 20 ))
                 .build();
+
 
 
         waitForStart();
