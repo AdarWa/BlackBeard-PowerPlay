@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,23 +11,20 @@ public class FlipIntake {
 
     private GamepadEx operator;
 
-    private DcMotorEx intakeMotor;
-    private Servo flipServo;
+    private DcMotor rightMotor;
+    private DcMotor leftMotor;
 
     public FlipIntake(GamepadEx operator, HardwareMap hardwareMap){
         this.operator = operator;
-        intakeMotor = hardwareMap.get(DcMotorEx.class,"intakeMotor");
-        flipServo = hardwareMap.servo.get("upDownServo");
+        rightMotor = hardwareMap.dcMotor.get("rightMotor");
+        leftMotor = hardwareMap.dcMotor.get("leftMotor");
     }
 
     public void intakeControl(){
-        intakeMotor.setPower(operator.getLeftY());
-        if(operator.getButton(GamepadKeys.Button.X)){
-            flipServo.setPosition(1);
-        }else{
-            flipServo.setPosition(0);
-        }
+        rightMotor.setPower(-operator.getLeftY());
+        leftMotor.setPower(operator.getLeftY());
     }
+
 
     private void sleep(long millis){
         try {Thread.sleep(millis);} catch (InterruptedException e) {e.printStackTrace();}

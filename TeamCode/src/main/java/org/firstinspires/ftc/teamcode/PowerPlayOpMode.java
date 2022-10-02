@@ -34,28 +34,28 @@ public class PowerPlayOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        frontLeft = new Motor(hardwareMap,"frontLeft");
-            frontRight = new Motor(hardwareMap,"frontRight");
-                backLeft = new Motor(hardwareMap,"backLeft");
-                    backRight = new Motor(hardwareMap,"backRight");
-
-        intakeServo1 = hardwareMap.servo.get("intakeServo1");
-        intakeServo2 = hardwareMap.servo.get("intakeServo2");
-
-
-        driver = new GamepadEx(gamepad1);
-        operator = new GamepadEx(gamepad2);
+//        frontLeft = new Motor(hardwareMap,"frontLeft");
+//            frontRight = new Motor(hardwareMap,"frontRight");
+//                backLeft = new Motor(hardwareMap,"backLeft");
+//                    backRight = new Motor(hardwareMap,"backRight");
+//
+//        intakeServo1 = hardwareMap.servo.get("intakeServo1");
+//        intakeServo2 = hardwareMap.servo.get("intakeServo2");
 
 
-        IMU imu = new IMU(hardwareMap);
+//        driver = new GamepadEx(gamepad1);
+        operator = new GamepadEx(gamepad1);
 
-        drive = new Drive(driver,imu,telemetry,frontLeft,frontRight,backLeft,backRight);
 
-        intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
+//        IMU imu = new IMU(hardwareMap);
+//
+//        drive = new Drive(driver,imu,telemetry,frontLeft,frontRight,backLeft,backRight);
+//
+//        intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
 
         flipIntake = new FlipIntake(operator, hardwareMap);
 
-        lift = new LiftPrototype(operator, hardwareMap, this);
+//        lift = new LiftPrototype(operator, hardwareMap, this);
 
 
 
@@ -63,10 +63,10 @@ public class PowerPlayOpMode extends LinearOpMode {
 
 
         while(opModeIsActive()){
-            drive.update();
-            intake.controlMechanism();
+//            drive.update();
+//            intake.controlMechanism();
             flipIntake.intakeControl();
-            lift.controlLift();
+//            lift.controlLift();
         }
 
     }

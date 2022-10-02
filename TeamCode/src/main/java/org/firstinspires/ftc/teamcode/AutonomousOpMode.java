@@ -34,9 +34,19 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.autoPlanB.MotorController;
+import org.firstinspires.ftc.teamcode.drive.AutonomousDrive;
+import org.firstinspires.ftc.teamcode.drive.RoadRunnerDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.vision.aprilTags.AprilTagDetector;
+import org.firstinspires.ftc.teamcode.vision.colorDetection.ColorDetector;
+import org.openftc.easyopencv.OpenCvCamera;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -56,10 +66,16 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class AutonomousOpMode extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private SampleMecanumDrive drive;
 
-    private static final Pose2d startPosition = new Pose2d(0,0,0);
-    private Pose2d lastPosition = startPosition;
+    private RoadRunnerDrive drive;
+    private MotorController controller;
+
+    private Integer parkSpot = null; //1 - parkSpot1 2 - parkSpot2 3 - parkSpot3
+
+    private AprilTagDetector aprilDetector;
+    private ColorDetector colorDetector;
+
+    private static final boolean useRoadRunner = true;
 
     @Override
     public void runOpMode() {
@@ -69,23 +85,61 @@ public class AutonomousOpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        if(useRoadRunner){
+            drive = new RoadRunnerDrive(hardwareMap);
+        }else {
+            controller = new MotorController(
+                    new DcMotor[]{
+                            hardwareMap.dcMotor.get("frontLeft"),
+                            hardwareMap.dcMotor.get("frontRight"),
+                            hardwareMap.dcMotor.get("backLeft"),
+                            hardwareMap.dcMotor.get("backRight")
+            },this);
+        }
+        aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
 
         waitForStart();
-        lineTo(new Vector2d(10,10));
-        try {Thread.sleep(5000);} catch (InterruptedException e) {e.printStackTrace();}
-        splineTo(new Vector2d(20,15), 90);
+
+        recognizeParkSpot();
+
+        if(useRoadRunner){
+            AutonomousDrive.drive(drive, parkSpot);
+        }else{
+            AutonomousDrive.drive(controller, parkSpot);
+        }
     }
 
-    private Trajectory lineTo(Vector2d pos){
-        return drive.trajectoryBuilder(lastPosition)
-                .lineTo(pos)
-                .build();
+    private void recognizeParkSpot(){
+        aprilDetector.startCamera();
+        runtime.reset();
+        telemetry.addData("ParkSpotDetection", "AprilTags");
+        while (!isStopRequested() && runtime.time(TimeUnit.SECONDS) < 6){
+            Integer spot = aprilDetector.detect();
+            if(spot != null){
+                parkSpot = spot;
+                telemetry.addData("ParkSpot", parkSpot);
+            }
+        }
+        aprilDetector.closeCamera(() -> {
+            colorDetector.startCamera();
+        });
+        if(parkSpot == null) {
+            telemetry.addData("ParkSpotDetection", "Color");
+            runtime.reset();
+            while (!isStopRequested() && runtime.time(TimeUnit.SECONDS) < 6) {
+                Integer spot = colorDetector.getDetection();
+                if (spot != null) {
+                    parkSpot = spot;
+                    telemetry.addData("ParkSpot", parkSpot);
+                }
+            }
+            if (parkSpot == null) {
+                telemetry.addData("ParkSpotDetection", "Random");
+                parkSpot = new Random().nextInt(3) + 1;
+                telemetry.addData("ParkSpot", parkSpot);
+            }
+        }
     }
 
-    private Trajectory splineTo(Vector2d pos, double heading){
-        return drive.trajectoryBuilder(lastPosition)
-                .splineTo(pos,heading)
-                .build();
-    }
+
 }
