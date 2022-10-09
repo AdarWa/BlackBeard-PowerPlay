@@ -22,7 +22,7 @@ public class FlipIntake {
 
     public void intakeControl(){
         rightMotor.setPower(-operator.getLeftY());
-        leftMotor.setPower(operator.getLeftY());
+        leftMotor.setPower(-operator.getLeftY());
     }
 
 

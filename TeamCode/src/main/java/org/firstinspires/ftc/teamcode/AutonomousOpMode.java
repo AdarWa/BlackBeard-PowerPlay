@@ -76,18 +76,17 @@ public class AutonomousOpMode extends LinearOpMode {
     private ColorDetector colorDetector;
 
     private static final boolean useRoadRunner = true;
+    private static final boolean onlyDetect = true;
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        debug("Status", "Initialized");
 
-        waitForStart();
         runtime.reset();
 
-        if(useRoadRunner){
+        if(useRoadRunner && !onlyDetect){
             drive = new RoadRunnerDrive(hardwareMap);
-        }else {
+        }else if(!onlyDetect){
             controller = new MotorController(
                     new DcMotor[]{
                             hardwareMap.dcMotor.get("frontLeft"),
@@ -97,47 +96,58 @@ public class AutonomousOpMode extends LinearOpMode {
             },this);
         }
         aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
-
+        aprilDetector.startCamera();
+//        colorDetector = new ColorDetector(hardwareMap, telemetry);
+        recognizeParkSpot();
         waitForStart();
 
-        recognizeParkSpot();
-
-        if(useRoadRunner){
+        if(useRoadRunner && !onlyDetect){
             AutonomousDrive.drive(drive, parkSpot);
-        }else{
+        }else if(!onlyDetect){
             AutonomousDrive.drive(controller, parkSpot);
         }
     }
 
     private void recognizeParkSpot(){
-        aprilDetector.startCamera();
+        debug("ParkSpotDetection", "AprilTags");
+        while(!isStopRequested() && !isStarted()){
+            detectAprilTag();
+        }
         runtime.reset();
-        telemetry.addData("ParkSpotDetection", "AprilTags");
-        while (!isStopRequested() && runtime.time(TimeUnit.SECONDS) < 6){
-            Integer spot = aprilDetector.detect();
-            if(spot != null){
-                parkSpot = spot;
-                telemetry.addData("ParkSpot", parkSpot);
+        if(parkSpot == null){
+            while (!isStopRequested() && (runtime.time(TimeUnit.SECONDS) < 10 )){
+                detectAprilTag();
             }
         }
-        aprilDetector.closeCamera(() -> {
-            colorDetector.startCamera();
-        });
         if(parkSpot == null) {
-            telemetry.addData("ParkSpotDetection", "Color");
-            runtime.reset();
-            while (!isStopRequested() && runtime.time(TimeUnit.SECONDS) < 6) {
-                Integer spot = colorDetector.getDetection();
-                if (spot != null) {
-                    parkSpot = spot;
-                    telemetry.addData("ParkSpot", parkSpot);
-                }
-            }
-            if (parkSpot == null) {
-                telemetry.addData("ParkSpotDetection", "Random");
+//            colorDetector.startCamera();
+//            telemetry.addData("ParkSpotDetection", "Color");
+//            runtime.reset();
+//            while (!isStopRequested() && runtime.time(TimeUnit.SECONDS) < 6) {
+//                Integer spot = colorDetector.getDetection();
+//                if (spot != null) {
+//                    parkSpot = spot;
+//                    telemetry.addData("ParkSpot", parkSpot);
+//                }
+//            }
+//            if (parkSpot == null) {
+                debug("ParkSpotDetection", "Random");
                 parkSpot = new Random().nextInt(3) + 1;
-                telemetry.addData("ParkSpot", parkSpot);
-            }
+                debug("ParkSpot", String.valueOf(parkSpot));
+//            }
+        }
+    }
+
+    private void debug(String caption, String value){
+        telemetry.addData(caption, value);
+        telemetry.update();
+    }
+
+    private void detectAprilTag(){
+        Integer spot = aprilDetector.detect();
+        if(spot != null){
+            parkSpot = spot;
+            debug("ParkSpot", String.valueOf(parkSpot));
         }
     }
 

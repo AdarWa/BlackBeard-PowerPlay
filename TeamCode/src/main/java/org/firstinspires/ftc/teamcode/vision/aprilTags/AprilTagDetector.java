@@ -26,7 +26,7 @@ public class AprilTagDetector {
     public static int[] tags = new int[]{0,1,2};
 
 
-    private OpenCvCamera camera;
+    public static OpenCvCamera camera;
     private AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     public DetectorCalibration calibration;
