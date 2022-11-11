@@ -34,39 +34,39 @@ public class PowerPlayOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-//        frontLeft = new Motor(hardwareMap,"frontLeft");
-//            frontRight = new Motor(hardwareMap,"frontRight");
-//                backLeft = new Motor(hardwareMap,"backLeft");
-//                    backRight = new Motor(hardwareMap,"backRight");
+        frontLeft = new Motor(hardwareMap,"frontLeft"); //declare the front left motor using the hardware map
+            frontRight = new Motor(hardwareMap,"frontRight"); //declare the front right motor using the hardware map
+                backLeft = new Motor(hardwareMap,"backLeft"); //declare the back left motor using the hardware map
+                    backRight = new Motor(hardwareMap,"backRight"); //declare the back right motor using the hardware map
 //
 //        intakeServo1 = hardwareMap.servo.get("intakeServo1");
 //        intakeServo2 = hardwareMap.servo.get("intakeServo2");
 
 
-//        driver = new GamepadEx(gamepad1);
-        operator = new GamepadEx(gamepad1);
+        driver = new GamepadEx(gamepad1); //declare the driver
+        operator = new GamepadEx(gamepad2); //declare the operator
 
 
-//        IMU imu = new IMU(hardwareMap);
-//
-//        drive = new Drive(driver,imu,telemetry,frontLeft,frontRight,backLeft,backRight);
+        IMU imu = new IMU(hardwareMap); //initialize the IMU
+
+        drive = new Drive(driver,imu,telemetry,frontLeft,frontRight,backLeft,backRight);
 //
 //        intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
 
-        flipIntake = new FlipIntake(operator, hardwareMap);
+//        flipIntake = new FlipIntake(operator, hardwareMap);
 
-//        lift = new LiftPrototype(operator, hardwareMap, this);
+        lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
 
 
 
-        waitForStart();
+        waitForStart(); //wait until the driver press "Start"
 
 
         while(opModeIsActive()){
-//            drive.update();
+            drive.update(); //drive using the joystick
 //            intake.controlMechanism();
-            flipIntake.intakeControl();
-//            lift.controlLift();
+//            flipIntake.intakeControl();
+            lift.controlLift(); //control the lift using the joystick
         }
 
     }

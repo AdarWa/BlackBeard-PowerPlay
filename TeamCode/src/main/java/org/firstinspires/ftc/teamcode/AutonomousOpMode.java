@@ -97,7 +97,7 @@ public class AutonomousOpMode extends LinearOpMode {
         }
         aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
         aprilDetector.startCamera();
-//        colorDetector = new ColorDetector(hardwareMap, telemetry);
+
         recognizeParkSpot();
         waitForStart();
 
