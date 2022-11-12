@@ -52,17 +52,17 @@ public class Drive {
 
         if(mode == DriveMode.JokerDrive) {
             drive.driveFieldCentric(
-                    driver.getLeftX() * powerMultiplier, //strafe
-                    driver.getLeftY() * powerMultiplier, //forward
-                    driver.getRightX() * powerMultiplier, //turn
+                    driver.getLeftX() * -powerMultiplier, //strafe
+                    driver.getLeftY() * -powerMultiplier, //forward
+                    driver.getRightX() * -powerMultiplier, //turn
                     heading //angle
 
             );
         }else{
             drive.driveRobotCentric(
-                    driver.getLeftX() * powerMultiplier, //strafe
-                    driver.getLeftY() * powerMultiplier, //forward
-                    driver.getRightX() * powerMultiplier //turn
+                    driver.getLeftX() * -powerMultiplier, //strafe
+                    driver.getLeftY() * -powerMultiplier, //forward
+                    driver.getRightX() * -powerMultiplier //turn
             );
         }
 

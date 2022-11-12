@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.FlipIntake;
 import org.firstinspires.ftc.teamcode.subsystems.LiftPrototype;
 
@@ -29,6 +31,8 @@ public class PowerPlayOpMode extends LinearOpMode {
 
     private LiftPrototype lift;
 
+    private SampleMecanumDrive roadrunner;
+
 
 
     @Override
@@ -38,6 +42,9 @@ public class PowerPlayOpMode extends LinearOpMode {
             frontRight = new Motor(hardwareMap,"frontRight"); //declare the front right motor using the hardware map
                 backLeft = new Motor(hardwareMap,"backLeft"); //declare the back left motor using the hardware map
                     backRight = new Motor(hardwareMap,"backRight"); //declare the back right motor using the hardware map
+
+        roadrunner = new SampleMecanumDrive(hardwareMap);
+        roadrunner.setPoseEstimate(new Pose2d(0,0));
 //
 //        intakeServo1 = hardwareMap.servo.get("intakeServo1");
 //        intakeServo2 = hardwareMap.servo.get("intakeServo2");
@@ -63,6 +70,8 @@ public class PowerPlayOpMode extends LinearOpMode {
 
 
         while(opModeIsActive()){
+            Pose2d pos = roadrunner.getPoseEstimate();
+            telemetry.addData("pos", pos.getX() + ","+ pos.getY());
             drive.update(); //drive using the joystick
 //            intake.controlMechanism();
 //            flipIntake.intakeControl();
