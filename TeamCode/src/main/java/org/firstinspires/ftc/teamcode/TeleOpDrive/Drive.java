@@ -51,6 +51,11 @@ public class Drive {
             heading = imu.getHeading();
 
         if(mode == DriveMode.JokerDrive) {
+            telemetry.addData("Mode", "Joker");
+            telemetry.addData("strafe", driver.getLeftX());
+            telemetry.addData("forward", driver.getLeftY());
+            telemetry.addData("turn", driver.getRightX());
+            telemetry.addData("powerMultiplier", -powerMultiplier);
             drive.driveFieldCentric(
                     driver.getLeftX() * -powerMultiplier, //strafe
                     driver.getLeftY() * -powerMultiplier, //forward

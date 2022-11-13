@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -8,10 +9,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
+import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.FlipIntake;
 import org.firstinspires.ftc.teamcode.subsystems.LiftPrototype;
+import org.firstinspires.ftc.teamcode.util.MathEx;
 
 @TeleOp
 public class PowerPlayOpMode extends LinearOpMode {
@@ -43,7 +46,7 @@ public class PowerPlayOpMode extends LinearOpMode {
                 backLeft = new Motor(hardwareMap,"backLeft"); //declare the back left motor using the hardware map
                     backRight = new Motor(hardwareMap,"backRight"); //declare the back right motor using the hardware map
 
-        roadrunner = new SampleMecanumDrive(hardwareMap);
+        roadrunner = new SampleMecanumDrive(hardwareMap, false);
         roadrunner.setPoseEstimate(new Pose2d(0,0));
 //
 //        intakeServo1 = hardwareMap.servo.get("intakeServo1");
@@ -64,14 +67,14 @@ public class PowerPlayOpMode extends LinearOpMode {
 
         lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
 
-
-
         waitForStart(); //wait until the driver press "Start"
 
 
         while(opModeIsActive()){
+            roadrunner.update();
             Pose2d pos = roadrunner.getPoseEstimate();
-            telemetry.addData("pos", pos.getX() + ","+ pos.getY());
+            telemetry.addData("pos", MathEx.roundOff(pos.getX(),100) + ","+ MathEx.roundOff(pos.getY(),100));
+            telemetry.addData("lift", AutoLiftController.checkPose2d(pos).toString());
             drive.update(); //drive using the joystick
 //            intake.controlMechanism();
 //            flipIntake.intakeControl();

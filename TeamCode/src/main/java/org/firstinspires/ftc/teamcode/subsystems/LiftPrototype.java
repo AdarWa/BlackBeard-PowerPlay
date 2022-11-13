@@ -9,11 +9,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class LiftPrototype {
 
-    enum Junction{
+    public enum Junction{
         Ground(0),
         Low(-2596),
-        Mid(-1108);
-        //High(0);
+        Mid(-1108),
+        High(0);
 
         private int i;
 

@@ -76,7 +76,7 @@ public class AutonomousOpMode extends LinearOpMode {
     private ColorDetector colorDetector;
 
     private static final boolean useRoadRunner = true;
-    private static final boolean onlyDetect = true;
+    private static final boolean onlyDetect = false;
 
     @Override
     public void runOpMode() {
@@ -95,16 +95,16 @@ public class AutonomousOpMode extends LinearOpMode {
                             hardwareMap.dcMotor.get("backRight")
             },this);
         }
-        aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
-        aprilDetector.startCamera();
-
-        recognizeParkSpot();
+//        aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
+//        aprilDetector.startCamera();
+//
+//        recognizeParkSpot();
         waitForStart();
 
         if(useRoadRunner && !onlyDetect){
-            AutonomousDrive.drive(drive, parkSpot);
+            AutonomousDrive.drive(drive, 0);
         }else if(!onlyDetect){
-            AutonomousDrive.drive(controller, parkSpot);
+            AutonomousDrive.drive(controller, 0);
         }
     }
 
