@@ -13,14 +13,36 @@ public class AutonomousDrive {
      * drive using the RoadRunner library
      */
     public static void drive(RoadRunnerDrive drive, int parkSpot){
-        TrajectorySequence sequence = drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34, 0))
-                .lineTo(new Vector2d(-60,-60))
-                .splineTo(new Vector2d(0,-60), 0)
-                .lineTo(new Vector2d(12,-60))
-                .lineTo(new Vector2d(12,0))
-                .turn(Math.toRadians(90))
-                .build();
-        drive.drive.followTrajectorySequence(sequence);
+//        TrajectorySequence sequence = drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34, 0))
+//                .lineTo(new Vector2d(-60,-60))
+//                .splineTo(new Vector2d(0,-60), 0)
+//                .lineTo(new Vector2d(12,-60))
+//                .lineTo(new Vector2d(12,0))
+//                .turn(Math.toRadians(90))
+//                .build();
+//        drive.drive.followTrajectorySequence(sequence);
+        TrajectorySequence trajectory = null;
+        if(parkSpot == 3){
+            trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34,0))
+                    .lineTo(new Vector2d(-60,-62))
+                    .lineTo(new Vector2d(-36,-60))
+                    .build();
+        }else if(parkSpot == 2){
+            trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34,0))
+                    .lineTo(new Vector2d(-60,-62))
+                    .lineTo(new Vector2d(0,-60))
+                    .lineTo(new Vector2d(-12,-34))
+                    .build();
+        }else if(parkSpot == 1){
+            trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34, 0))
+                    .lineTo(new Vector2d(-60,-62))
+                    .lineTo(new Vector2d(0,-60))
+                    .lineTo(new Vector2d(-12,-10))
+                    .lineTo(new Vector2d(-36,-12))
+                    .build();
+        }
+        if (trajectory != null)
+            drive.drive.followTrajectorySequence(trajectory);
     }
 
     /**

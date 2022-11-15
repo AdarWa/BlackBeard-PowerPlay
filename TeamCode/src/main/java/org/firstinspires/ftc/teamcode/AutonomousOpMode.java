@@ -95,16 +95,16 @@ public class AutonomousOpMode extends LinearOpMode {
                             hardwareMap.dcMotor.get("backRight")
             },this);
         }
-//        aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
-//        aprilDetector.startCamera();
-//
-//        recognizeParkSpot();
+        aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
+        aprilDetector.startCamera();
+
+        recognizeParkSpot();
         waitForStart();
 
         if(useRoadRunner && !onlyDetect){
-            AutonomousDrive.drive(drive, 0);
+            AutonomousDrive.drive(drive, parkSpot);
         }else if(!onlyDetect){
-            AutonomousDrive.drive(controller, 0);
+            AutonomousDrive.drive(controller, parkSpot);
         }
     }
 

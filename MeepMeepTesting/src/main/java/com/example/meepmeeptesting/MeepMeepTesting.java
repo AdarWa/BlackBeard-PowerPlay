@@ -15,11 +15,16 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 9.4)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-61, -34, 0))
-                        .lineTo(new Vector2d(-60,-60))
-                        .splineTo(new Vector2d(-12,-60), 0)
-                        .lineTo(new Vector2d(-12,0))
-                        .lineTo(new Vector2d(0,0))
-                        .build()
+//                        .lineTo(new Vector2d(-60,-60))
+//                        .splineTo(new Vector2d(-12,-60), 0)
+//                        .lineTo(new Vector2d(-12,0))
+//                        .lineTo(new Vector2d(0,0))
+//                        .build()
+                                .lineTo(new Vector2d(-60,-62))
+                                .lineTo(new Vector2d(-12,-60))
+                                .lineTo(new Vector2d(-12,-10))
+                                .lineTo(new Vector2d(-36,-12))
+                                .build()
                 );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_KAI_DARK)
