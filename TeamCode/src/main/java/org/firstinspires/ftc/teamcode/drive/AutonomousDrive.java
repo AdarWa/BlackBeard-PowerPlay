@@ -31,13 +31,13 @@ public class AutonomousDrive {
             trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34,0))
                     .lineTo(new Vector2d(-60,-62))
                     .lineTo(new Vector2d(0,-60))
-                    .lineTo(new Vector2d(-12,-34))
+                    .lineTo(new Vector2d(0,-34))
                     .build();
         }else if(parkSpot == 1){
             trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34, 0))
                     .lineTo(new Vector2d(-60,-62))
                     .lineTo(new Vector2d(0,-60))
-                    .lineTo(new Vector2d(-12,-10))
+                    .lineTo(new Vector2d(0,-10))
                     .lineTo(new Vector2d(-36,-12))
                     .build();
         }

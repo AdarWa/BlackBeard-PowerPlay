@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.aprilTags;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -68,6 +69,7 @@ public class AprilTagDetector {
                 telemetry.addData("Error!", errorCode);
             }
         });
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         telemetry.setMsTransmissionInterval(50);
     }
