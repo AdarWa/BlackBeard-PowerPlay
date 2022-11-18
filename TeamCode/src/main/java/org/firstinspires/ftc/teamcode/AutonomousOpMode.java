@@ -115,7 +115,7 @@ public class AutonomousOpMode extends LinearOpMode {
         }
         runtime.reset();
         if(parkSpot == null){
-            while (!isStopRequested() && (runtime.time(TimeUnit.SECONDS) < 10 )){
+            while (!isStopRequested() && (runtime.time(TimeUnit.SECONDS) < 5 )){
                 detectAprilTag();
             }
         }
