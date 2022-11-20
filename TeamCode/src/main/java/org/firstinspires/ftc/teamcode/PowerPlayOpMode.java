@@ -46,8 +46,8 @@ public class PowerPlayOpMode extends LinearOpMode {
                 backLeft = new Motor(hardwareMap,"backLeft"); //declare the back left motor using the hardware map
                     backRight = new Motor(hardwareMap,"backRight"); //declare the back right motor using the hardware map
 
-        roadrunner = new SampleMecanumDrive(hardwareMap, false);
-        roadrunner.setPoseEstimate(new Pose2d(0,0));
+//        roadrunner = new SampleMecanumDrive(hardwareMap, false);
+//        roadrunner.setPoseEstimate(new Pose2d(0,0));
 //
 //        intakeServo1 = hardwareMap.servo.get("intakeServo1");
 //        intakeServo2 = hardwareMap.servo.get("intakeServo2");
@@ -74,7 +74,7 @@ public class PowerPlayOpMode extends LinearOpMode {
             roadrunner.update();
             Pose2d pos = roadrunner.getPoseEstimate();
             telemetry.addData("pos", MathEx.roundOff(pos.getX(),100) + ","+ MathEx.roundOff(pos.getY(),100));
-            telemetry.addData("lift", AutoLiftController.checkPose2d(pos).toString());
+//            telemetry.addData("lift", AutoLiftController.checkPose2d(pos).toString());
             drive.update(); //drive using the joystick
 //            intake.controlMechanism();
 //            flipIntake.intakeControl();
