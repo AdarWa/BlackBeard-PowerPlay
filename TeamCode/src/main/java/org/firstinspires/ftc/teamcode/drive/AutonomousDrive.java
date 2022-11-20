@@ -21,24 +21,27 @@ public class AutonomousDrive {
 //                .turn(Math.toRadians(90))
 //                .build();
 //        drive.drive.followTrajectorySequence(sequence);
+//        TrajectorySequence trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(0,0,0))
+//                .lineTo(new Vector2d(0,50))
+//                .build();
         TrajectorySequence trajectory = null;
         if(parkSpot == 3){
             trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34,0))
                     .lineTo(new Vector2d(-60,-62))
-                    .lineTo(new Vector2d(-36,-60))
+                    .lineTo(new Vector2d(-29,-60))
                     .build();
         }else if(parkSpot == 2){
             trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34,0))
                     .lineTo(new Vector2d(-60,-62))
-                    .lineTo(new Vector2d(0,-60))
-                    .lineTo(new Vector2d(0,-34))
+                    .lineTo(new Vector2d(5,-60))
+                    .lineTo(new Vector2d(8,-23))
                     .build();
         }else if(parkSpot == 1){
             trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34, 0))
                     .lineTo(new Vector2d(-60,-62))
-                    .lineTo(new Vector2d(0,-60))
-                    .lineTo(new Vector2d(0,-10))
-                    .lineTo(new Vector2d(-36,-12))
+                    .lineTo(new Vector2d(5,-60))
+                    .lineTo(new Vector2d(8,6))
+                    .lineTo(new Vector2d(-20,6))
                     .build();
         }
         if (trajectory != null)
