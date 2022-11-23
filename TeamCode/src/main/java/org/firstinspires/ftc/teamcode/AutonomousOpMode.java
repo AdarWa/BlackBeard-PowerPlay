@@ -62,8 +62,7 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonomousOpMode", group="Autonomous")
-public class AutonomousOpMode extends LinearOpMode {
+public class AutonomousOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -75,47 +74,55 @@ public class AutonomousOpMode extends LinearOpMode {
     private AprilTagDetector aprilDetector;
     private ColorDetector colorDetector;
 
+    private AutoBasic autoType;
+    private LinearOpMode opMode;
+
     private static final boolean useRoadRunner = true;
     private static final boolean onlyDetect = false;
 
-    @Override
+    public AutonomousOpMode(LinearOpMode opMode, AutoBasic autoType){
+        this.opMode = opMode;
+        this.autoType = autoType;
+    }
+
+
     public void runOpMode() {
         debug("Status", "Initialized");
 
         runtime.reset();
 
         if(useRoadRunner && !onlyDetect){
-            drive = new RoadRunnerDrive(hardwareMap);
+            drive = new RoadRunnerDrive(opMode.hardwareMap);
         }else if(!onlyDetect){
             controller = new MotorController(
                     new DcMotor[]{
-                            hardwareMap.dcMotor.get("frontLeft"),
-                            hardwareMap.dcMotor.get("frontRight"),
-                            hardwareMap.dcMotor.get("backLeft"),
-                            hardwareMap.dcMotor.get("backRight")
-            },this);
+                            opMode.hardwareMap.dcMotor.get("frontLeft"),
+                            opMode.hardwareMap.dcMotor.get("frontRight"),
+                            opMode.hardwareMap.dcMotor.get("backLeft"),
+                            opMode.hardwareMap.dcMotor.get("backRight")
+            },opMode);
         }
-        aprilDetector = new AprilTagDetector(hardwareMap, telemetry);
+        aprilDetector = new AprilTagDetector(opMode.hardwareMap, opMode.telemetry);
         aprilDetector.startCamera();
 
         recognizeParkSpot();
-        waitForStart();
+        opMode.waitForStart();
 
         if(useRoadRunner && !onlyDetect){
-            AutonomousDrive.drive(drive, parkSpot);
+            AutonomousDrive.drive(drive, parkSpot, autoType);
         }else if(!onlyDetect){
-            AutonomousDrive.drive(controller, parkSpot);
+            AutonomousDrive.drive(controller, parkSpot, autoType);
         }
     }
 
     private void recognizeParkSpot(){
         debug("ParkSpotDetection", "AprilTags");
-        while(!isStopRequested() && !isStarted()){
+        while(!opMode.isStopRequested() && !opMode.isStarted()){
             detectAprilTag();
         }
         runtime.reset();
         if(parkSpot == null){
-            while (!isStopRequested() && (runtime.time(TimeUnit.SECONDS) < 5 )){
+            while (!opMode.isStopRequested() && (runtime.time(TimeUnit.SECONDS) < 5 )){
                 detectAprilTag();
             }
         }
@@ -139,8 +146,8 @@ public class AutonomousOpMode extends LinearOpMode {
     }
 
     private void debug(String caption, String value){
-        telemetry.addData(caption, value);
-        telemetry.update();
+        opMode.telemetry.addData(caption, value);
+        opMode.telemetry.update();
     }
 
     private void detectAprilTag(){

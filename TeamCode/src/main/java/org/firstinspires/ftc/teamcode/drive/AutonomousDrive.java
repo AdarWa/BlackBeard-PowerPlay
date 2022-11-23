@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
+import org.firstinspires.ftc.teamcode.AutoBasic;
 import org.firstinspires.ftc.teamcode.autoPlanB.MotorController;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -12,7 +13,7 @@ public class AutonomousDrive {
     /**
      * drive using the RoadRunner library
      */
-    public static void drive(RoadRunnerDrive drive, int parkSpot){
+    public static void drive(RoadRunnerDrive drive, int parkSpot, AutoBasic autoType){
 //        TrajectorySequence sequence = drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34, 0))
 //                .lineTo(new Vector2d(-60,-60))
 //                .splineTo(new Vector2d(0,-60), 0)
@@ -24,26 +25,7 @@ public class AutonomousDrive {
 //        TrajectorySequence trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(0,0,0))
 //                .lineTo(new Vector2d(0,50))
 //                .build();
-        TrajectorySequence trajectory = null;
-        if(parkSpot == 3){
-            trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34,0))
-                    .lineTo(new Vector2d(-60,-62))
-                    .lineTo(new Vector2d(-29,-60))
-                    .build();
-        }else if(parkSpot == 2){
-            trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34,0))
-                    .lineTo(new Vector2d(-60,-62))
-                    .lineTo(new Vector2d(5,-60))
-                    .lineTo(new Vector2d(8,-23))
-                    .build();
-        }else if(parkSpot == 1){
-            trajectory = drive.drive.trajectorySequenceBuilder(new Pose2d(-61,-34, 0))
-                    .lineTo(new Vector2d(-60,-62))
-                    .lineTo(new Vector2d(5,-60))
-                    .lineTo(new Vector2d(8,6))
-                    .lineTo(new Vector2d(-20,6))
-                    .build();
-        }
+        TrajectorySequence trajectory = driveByParkSpot(drive, parkSpot, autoType);
         if (trajectory != null)
             drive.drive.followTrajectorySequence(trajectory);
     }
@@ -51,7 +33,34 @@ public class AutonomousDrive {
     /**
      * drive without roadrunner
      */
-    public static void drive(MotorController controller, int parkSpot){
+    public static void drive(MotorController controller, int parkSpot, AutoBasic autoType){
 
+    }
+
+    private static TrajectorySequence driveByParkSpot(RoadRunnerDrive drive, int parkSpot, AutoBasic autoType){
+        int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
+        if(parkSpot == 3){
+                return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier , 0))
+                        .lineTo(new Vector2d(-60, -62 * multiplier))
+                        .lineTo(new Vector2d(-29, -60 * multiplier))
+                        .build();
+        }else if(parkSpot == 2){
+                return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
+                        .lineTo(new Vector2d(-60, -62 * multiplier))
+                        .lineTo(new Vector2d(5, -60 * multiplier))
+                        .turn(Math.toRadians(90 * multiplier))
+                        .lineTo(new Vector2d(8, -27 * multiplier))
+                        .build();
+        }else if(parkSpot == 1){
+                return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
+                        .lineTo(new Vector2d(-60, -62 * multiplier))
+                        .lineTo(new Vector2d(5, -60 * multiplier))
+                        .turn(Math.toRadians(90 * multiplier))
+                        .lineTo(new Vector2d(8, 2 * multiplier))
+                        .turn(Math.toRadians(90 * multiplier))
+                        .lineTo(new Vector2d(-20, 4 * multiplier))
+                        .build();
+        }
+        return null;
     }
 }
