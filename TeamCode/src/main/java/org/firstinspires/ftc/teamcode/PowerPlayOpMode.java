@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.FlipIntake;
+import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.LiftPrototype;
 import org.firstinspires.ftc.teamcode.util.MathEx;
 
@@ -66,19 +67,20 @@ public class PowerPlayOpMode extends LinearOpMode {
 //        flipIntake = new FlipIntake(operator, hardwareMap);
 
         lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
-
+        Gripper gripper = new Gripper(operator, hardwareMap);
         waitForStart(); //wait until the driver press "Start"
 
 
         while(opModeIsActive()){
-            roadrunner.update();
-            Pose2d pos = roadrunner.getPoseEstimate();
-            telemetry.addData("pos", MathEx.roundOff(pos.getX(),100) + ","+ MathEx.roundOff(pos.getY(),100));
+//            roadrunner.update();
+//            Pose2d pos = roadrunner.getPoseEstimate();
+//            telemetry.addData("pos", MathEx.roundOff(pos.getX(),100) + ","+ MathEx.roundOff(pos.getY(),100));
 //            telemetry.addData("lift", AutoLiftController.checkPose2d(pos).toString());
             drive.update(); //drive using the joystick
 //            intake.controlMechanism();
 //            flipIntake.intakeControl();
             lift.controlLift(); //control the lift using the joystick
+            gripper.update();
         }
 
     }

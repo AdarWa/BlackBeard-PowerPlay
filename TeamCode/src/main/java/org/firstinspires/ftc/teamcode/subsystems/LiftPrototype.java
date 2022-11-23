@@ -37,13 +37,11 @@ public class LiftPrototype {
     public LiftPrototype(GamepadEx operator, HardwareMap  hardwareMap, LinearOpMode opMode){
         this.operator = operator;
         this.opMode = opMode;
-
-
-
-
+        liftMotor = hardwareMap.dcMotor.get("liftMotor");
     }
 
     public void controlLift(){
+        liftMotor.setPower(operator.getRightY()/4);
         operator.readButtons();
         if(operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
             goToJunc(Junction.Ground);
