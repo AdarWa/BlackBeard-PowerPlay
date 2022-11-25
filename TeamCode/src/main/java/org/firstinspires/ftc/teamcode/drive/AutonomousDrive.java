@@ -49,7 +49,7 @@ public class AutonomousDrive {
                     .lineTo(new Vector2d(-60, -70 * multiplier))
                     .lineTo(new Vector2d(5, -70 * multiplier))
                     .turn(Math.toRadians(90 * multiplier))
-                    .lineTo(new Vector2d(8, -38 * multiplier))
+                    .lineTo(new Vector2d(8, -42 * multiplier))
                     .build();
         }else if(parkSpot == 1){
             return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))

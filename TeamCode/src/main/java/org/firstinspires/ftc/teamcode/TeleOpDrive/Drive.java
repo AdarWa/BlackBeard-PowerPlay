@@ -79,7 +79,12 @@ public class Drive {
 
 
     private void changePowerByRightBumper(){
-        powerMultiplier = driver.isDown(GamepadKeys.Button.RIGHT_BUMPER) ? 0.5 : 1;
+        if(driver.isDown(GamepadKeys.Button.LEFT_BUMPER))
+            powerMultiplier = 0.9;
+        else if(driver.isDown(GamepadKeys.Button.RIGHT_BUMPER))
+            powerMultiplier = 0.2;
+        else
+            powerMultiplier = 0.65;
     }
 
     private void changeModeByLeftBumper(){
