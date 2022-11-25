@@ -66,7 +66,7 @@ public class PowerPlayOpMode extends LinearOpMode {
 
 //        flipIntake = new FlipIntake(operator, hardwareMap);
 
-        lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
+//        lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
         Gripper gripper = new Gripper(operator, hardwareMap);
         waitForStart(); //wait until the driver press "Start"
 

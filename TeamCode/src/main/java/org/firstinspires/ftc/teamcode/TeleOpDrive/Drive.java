@@ -56,11 +56,13 @@ public class Drive {
             telemetry.addData("forward", driver.getLeftY());
             telemetry.addData("turn", driver.getRightX());
             telemetry.addData("powerMultiplier", -powerMultiplier);
+            telemetry.addData("heading", HeadingStorage.heading);
+            telemetry.update();
             drive.driveFieldCentric(
                     driver.getLeftX() * -powerMultiplier, //strafe
                     driver.getLeftY() * -powerMultiplier, //forward
                     driver.getRightX() * -powerMultiplier, //turn
-                    heading //angle
+                    heading + HeadingStorage.heading //angle
 
             );
         }else{

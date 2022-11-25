@@ -40,26 +40,26 @@ public class AutonomousDrive {
     private static TrajectorySequence driveByParkSpot(RoadRunnerDrive drive, int parkSpot, AutoBasic autoType){
         int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
         if(parkSpot == 3){
-                return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier , 0))
-                        .lineTo(new Vector2d(-60, -62 * multiplier))
-                        .lineTo(new Vector2d(-29, -60 * multiplier))
-                        .build();
+            return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier , 0))
+                    .lineTo(new Vector2d(-60, -66 * multiplier))
+                    .lineTo(new Vector2d(-29, -66 * multiplier))
+                    .build();
         }else if(parkSpot == 2){
-                return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
-                        .lineTo(new Vector2d(-60, -62 * multiplier))
-                        .lineTo(new Vector2d(5, -60 * multiplier))
-                        .turn(Math.toRadians(90 * multiplier))
-                        .lineTo(new Vector2d(8, -27 * multiplier))
-                        .build();
+            return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
+                    .lineTo(new Vector2d(-60, -70 * multiplier))
+                    .lineTo(new Vector2d(5, -70 * multiplier))
+                    .turn(Math.toRadians(90 * multiplier))
+                    .lineTo(new Vector2d(8, -38 * multiplier))
+                    .build();
         }else if(parkSpot == 1){
-                return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
-                        .lineTo(new Vector2d(-60, -62 * multiplier))
-                        .lineTo(new Vector2d(5, -60 * multiplier))
-                        .turn(Math.toRadians(90 * multiplier))
-                        .lineTo(new Vector2d(8, 2 * multiplier))
-                        .turn(Math.toRadians(90 * multiplier))
-                        .lineTo(new Vector2d(-20, 4 * multiplier))
-                        .build();
+            return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
+                    .lineTo(new Vector2d(-60, -70 * multiplier))
+                    .lineTo(new Vector2d(5, -70 * multiplier))
+                    .turn(Math.toRadians(90 * multiplier))
+                    .lineTo(new Vector2d(8, -8 * multiplier))
+                    .turn(Math.toRadians(90 * multiplier))
+                    .lineTo(new Vector2d(-20, -8 * multiplier))
+                    .build();
         }
         return null;
     }

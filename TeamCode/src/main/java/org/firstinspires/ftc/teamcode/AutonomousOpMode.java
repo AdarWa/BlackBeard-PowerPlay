@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.TeleOpDrive.HeadingStorage;
 import org.firstinspires.ftc.teamcode.autoPlanB.MotorController;
 import org.firstinspires.ftc.teamcode.drive.AutonomousDrive;
 import org.firstinspires.ftc.teamcode.drive.RoadRunnerDrive;
@@ -113,6 +114,7 @@ public class AutonomousOpMode {
         }else if(!onlyDetect){
             AutonomousDrive.drive(controller, parkSpot, autoType);
         }
+        HeadingStorage.heading = Math.toDegrees(drive.drive.getExternalHeading());
     }
 
     private void recognizeParkSpot(){
