@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.TeleOpDrive;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 
+@Config
 public class Drive {
 
     enum DriveMode {
@@ -22,10 +26,12 @@ public class Drive {
     private IMU imu;
     private Telemetry telemetry;
 
+    public static PIDCoefficients headingPID = new PIDCoefficients(0,0,0);
+
     private double heading = 0;
 
     private DriveMode mode = DriveMode.JokerDrive;
-
+    private double currentHeading = 0;
     private double powerMultiplier = 1;
 
     public Drive(GamepadEx driver,
@@ -41,6 +47,7 @@ public class Drive {
         this.driver = driver;
         this.imu = imu;
         this.telemetry = telemetry;
+        currentHeading = imu.getHeading();
     }
 
     public void update(){
@@ -73,8 +80,30 @@ public class Drive {
             );
         }
 
+        if(driver.getRightX() != 0){
+            currentHeading = imu.getHeading();
+        }
+
+        correctHeading();
+
         telemetry.addData("Heading", heading);
         telemetry.update();
+    }
+
+    private double integral = 0;
+
+    private void correctHeading(){
+        heading = imu.getHeading();
+        double error = currentHeading - heading;
+        integral += error;
+        double p = error * headingPID.p;
+        double i = integral * headingPID.i;
+        double corretion = p+i;
+        corretion = Range.clip(corretion, -1, 1);
+        motors[0].set(corretion);
+        motors[2].set(corretion);
+        motors[1].set(corretion);
+        motors[3].set(corretion);
     }
 
 
