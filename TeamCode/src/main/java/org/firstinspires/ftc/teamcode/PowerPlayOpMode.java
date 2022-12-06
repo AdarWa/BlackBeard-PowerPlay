@@ -79,7 +79,7 @@ public class PowerPlayOpMode extends LinearOpMode {
             drive.update(); //drive using the joystick
 //            intake.controlMechanism();
 //            flipIntake.intakeControl();
-//            lift.controlLift(); //control the lift using the joystick
+            lift.controlLift(); //control the lift using the joystick
             gripper.update();
         }
 
