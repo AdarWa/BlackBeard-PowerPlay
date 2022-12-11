@@ -19,7 +19,6 @@ public class Drive {
     private Motor[] motors;
     private MecanumDrive drive;
     private GamepadEx driver;
-    private IMU imu;
     private Telemetry telemetry;
 
     private double heading = 0;
@@ -29,7 +28,6 @@ public class Drive {
     private double powerMultiplier = 1;
 
     public Drive(GamepadEx driver,
-                 IMU imu,
                  Telemetry telemetry,
                  Motor... motors){
         this.motors = motors;
@@ -39,16 +37,15 @@ public class Drive {
                 motors[3]);
 
         this.driver = driver;
-        this.imu = imu;
         this.telemetry = telemetry;
     }
 
-    public void update(){
+    public void update(double heading){
         changePowerByRightBumper();
         changeModeByLeftBumper();
 
         if(mode == DriveMode.JokerDrive)
-            heading = imu.getHeading();
+
 
         if(mode == DriveMode.JokerDrive) {
             telemetry.addData("Mode", "Joker");
@@ -73,8 +70,8 @@ public class Drive {
             );
         }
 
-        telemetry.addData("Heading", heading);
-        telemetry.update();
+//        telemetry.addData("Heading", heading);
+//        telemetry.update();
     }
 
 

@@ -53,14 +53,13 @@ public class PowerPlayOpMode extends LinearOpMode {
 //        intakeServo1 = hardwareMap.servo.get("intakeServo1");
 //        intakeServo2 = hardwareMap.servo.get("intakeServo2");
 
+        SampleMecanumDrive roadrunner = new SampleMecanumDrive(hardwareMap, false);
 
         driver = new GamepadEx(gamepad1); //declare the driver
         operator = new GamepadEx(gamepad2); //declare the operator
 
 
-        IMU imu = new IMU(hardwareMap); //initialize the IMU
-
-        drive = new Drive(driver,imu,telemetry,frontLeft,frontRight,backLeft,backRight);
+        drive = new Drive(driver,telemetry,frontLeft,frontRight,backLeft,backRight);
 //
 //        intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
 
@@ -72,11 +71,20 @@ public class PowerPlayOpMode extends LinearOpMode {
 
 
         while(opModeIsActive()){
+            double heading = Math.toDegrees(roadrunner.getExternalHeading());
+            drive.update(heading); //drive using the joystick
+            roadrunner.update();
+            Pose2d point = roadrunner.getPoseEstimate();
+            LiftPrototype.Junction autoLiftJunc = AutoLiftController.checkHeading(
+                    AutoLiftController.checkPose2d(point)
+                    ,point, heading, telemetry);
+
+            telemetry.addData("Lift", autoLiftJunc.toString());
+//            telemetry.update();
 //            roadrunner.update();
 //            Pose2d pos = roadrunner.getPoseEstimate();
 //            telemetry.addData("pos", MathEx.roundOff(pos.getX(),100) + ","+ MathEx.roundOff(pos.getY(),100));
-//            telemetry.addData("lift", AutoLiftController.checkPose2d(pos).toString());
-            drive.update(); //drive using the joystick
+//            telemetry.addData("lift", AutoLiftController.checkPose2d(pos).toString())
 //            intake.controlMechanism();
 //            flipIntake.intakeControl();
 //            lift.controlLift(); //control the lift using the joystick

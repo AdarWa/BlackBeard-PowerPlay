@@ -10,6 +10,12 @@ public class MotorTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        String[] names = new String[]{
+                "frontRight",
+                "backRight",
+                "frontLeft",
+                "backLeft"
+        };
         DcMotor[] motors = new DcMotor[]{
                 hardwareMap.dcMotor.get("frontRight"),
                 hardwareMap.dcMotor.get("backRight"),
@@ -18,11 +24,15 @@ public class MotorTest extends LinearOpMode {
         };
         waitForStart();
         while (opModeIsActive()){
-            for(DcMotor motor : motors){
-                motor.setPower(1);
-                Thread.sleep(5000);
-                motor.setPower(0);
+            for (int i = 0; i < motors.length; i++) {
+                telemetry.addData(names[i], motors[i].getPortNumber());
             }
+            telemetry.update();
+//            for(DcMotor motor : motors){
+//                motor.setPower(1);
+//                Thread.sleep(5000);
+//                motor.setPower(0);
+//            }
             
         }
     }
