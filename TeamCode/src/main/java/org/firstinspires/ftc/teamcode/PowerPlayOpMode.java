@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
+
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
@@ -16,6 +22,9 @@ import org.firstinspires.ftc.teamcode.subsystems.FlipIntake;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.LiftPrototype;
 import org.firstinspires.ftc.teamcode.util.MathEx;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @TeleOp
 public class PowerPlayOpMode extends LinearOpMode {
@@ -41,11 +50,10 @@ public class PowerPlayOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         frontLeft = new Motor(hardwareMap,"frontLeft"); //declare the front left motor using the hardware map
-            frontRight = new Motor(hardwareMap,"frontRight"); //declare the front right motor using the hardware map
-                backLeft = new Motor(hardwareMap,"backLeft"); //declare the back left motor using the hardware map
-                    backRight = new Motor(hardwareMap,"backRight"); //declare the back right motor using the hardware map
+        frontRight = new Motor(hardwareMap,"frontRight"); //declare the front right motor using the hardware map
+        backLeft = new Motor(hardwareMap,"backLeft"); //declare the back left motor using the hardware map
+        backRight = new Motor(hardwareMap,"backRight"); //declare the back right motor using the hardware map
 
 //        roadrunner = new SampleMecanumDrive(hardwareMap, false);
 //        roadrunner.setPoseEstimate(new Pose2d(0,0));
@@ -53,13 +61,15 @@ public class PowerPlayOpMode extends LinearOpMode {
 //        intakeServo1 = hardwareMap.servo.get("intakeServo1");
 //        intakeServo2 = hardwareMap.servo.get("intakeServo2");
 
-        SampleMecanumDrive roadrunner = new SampleMecanumDrive(hardwareMap, false);
 
         driver = new GamepadEx(gamepad1); //declare the driver
         operator = new GamepadEx(gamepad2); //declare the operator
 
-
+        roadrunner = new SampleMecanumDrive(hardwareMap, false, false,
+                (DcMotorEx) frontLeft.motor,(DcMotorEx)frontRight.motor,(DcMotorEx)backLeft.motor,(DcMotorEx)backRight.motor);
         drive = new Drive(driver,telemetry,frontLeft,frontRight,backLeft,backRight);
+        roadrunner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 //
 //        intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
 
@@ -71,15 +81,18 @@ public class PowerPlayOpMode extends LinearOpMode {
 
 
         while(opModeIsActive()){
-            double heading = Math.toDegrees(roadrunner.getExternalHeading());
-            drive.update(heading); //drive using the joystick
             roadrunner.update();
             Pose2d point = roadrunner.getPoseEstimate();
+            double heading = Math.toDegrees(point.getHeading());
+            drive.update(heading); //drive using the joystick
             LiftPrototype.Junction autoLiftJunc = AutoLiftController.checkHeading(
                     AutoLiftController.checkPose2d(point)
                     ,point, heading, telemetry);
 
             telemetry.addData("Lift", autoLiftJunc.toString());
+            telemetry.addData("Heading1", heading);
+            telemetry.addData("x", point.getX());
+            telemetry.addData("y", point.getY());
 //            telemetry.update();
 //            roadrunner.update();
 //            Pose2d pos = roadrunner.getPoseEstimate();

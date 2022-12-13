@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.AutoBasic;
 import org.firstinspires.ftc.teamcode.autoPlanB.MotorController;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 public class AutonomousDrive {
 
@@ -39,28 +40,19 @@ public class AutonomousDrive {
 
     private static TrajectorySequence driveByParkSpot(RoadRunnerDrive drive, int parkSpot, AutoBasic autoType){
         int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
-        if(parkSpot == 3){
-            return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier , 0))
-                    .lineTo(new Vector2d(-60, -66 * multiplier))
-                    .lineTo(new Vector2d(-29, -66 * multiplier))
-                    .build();
-        }else if(parkSpot == 2){
-            return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
-                    .lineTo(new Vector2d(-60, -70 * multiplier))
-                    .lineTo(new Vector2d(5, -70 * multiplier))
-                    .turn(Math.toRadians(90 * multiplier))
-                    .lineTo(new Vector2d(8, -42 * multiplier))
-                    .build();
-        }else if(parkSpot == 1){
-            return drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier, 0))
-                    .lineTo(new Vector2d(-60, -70 * multiplier))
-                    .lineTo(new Vector2d(5, -70 * multiplier))
-                    .turn(Math.toRadians(90 * multiplier))
-                    .lineTo(new Vector2d(8, -8 * multiplier))
-                    .turn(Math.toRadians(90 * multiplier))
-                    .lineTo(new Vector2d(-20, -8 * multiplier))
-                    .build();
-        }
-        return null;
+        TrajectorySequenceBuilder sqeuence = drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier));
+
+        sqeuence = sqeuence.strafeRight(Utils.cmToInch(52))
+                .forward(Utils.cmToInch(137))
+                .strafeLeft(Utils.cmToInch(85)).waitSeconds(4);
+
+        if(parkSpot == 2)
+            sqeuence = sqeuence.strafeRight(Utils.cmToInch(30));
+        else if(parkSpot == 1)
+            sqeuence = sqeuence.strafeLeft(Utils.cmToInch(30));
+        else  if(parkSpot == 3)
+            sqeuence = sqeuence.strafeRight(Utils.cmToInch(90));
+
+        return sqeuence.build();
     }
 }

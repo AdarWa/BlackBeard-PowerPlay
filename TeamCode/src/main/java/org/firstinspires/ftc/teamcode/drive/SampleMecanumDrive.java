@@ -79,15 +79,15 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-        init(hardwareMap, true);
+        init(hardwareMap, true, true);
     }
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, boolean reverseMotors) {
+    public SampleMecanumDrive(HardwareMap hardwareMap, boolean reverseMotors, boolean initMotors, DcMotorEx... motors_) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-        init(hardwareMap, reverseMotors);
+        init(hardwareMap, reverseMotors, initMotors, motors_);
     }
 
-    private void init(HardwareMap hardwareMap, boolean reverseMotors){
+    private void init(HardwareMap hardwareMap, boolean reverseMotors,boolean initMotors, DcMotorEx... motors_){
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -127,11 +127,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        if(!initMotors){
+            leftFront = motors_[0];
+            leftRear = motors_[2];
+            rightRear = motors_[3];
+            rightFront = motors_[1];
+        }else {
+            leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+            leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
+            rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
+            rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        }
         if(reverseMotors){
             leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
             leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -288,6 +294,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
         }
         return wheelPositions;
+    }
+
+    public List<DcMotorEx> getMotors(){
+        return motors;
     }
 
     @Override
