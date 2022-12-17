@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,10 +11,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class LiftPrototype {
 
     public enum Junction{
-        Ground(0),
-        Low(-2596),
-        Mid(-1108),
-        High(0);
+        Ground(478),
+        Low(1870);
+//        Mid(-1108),
+//        High(0);
 
         private int i;
 
@@ -27,7 +28,7 @@ public class LiftPrototype {
     }
 
 
-    private DcMotor liftMotor;
+    public DcMotor liftMotor;
     private GamepadEx operator;
     private LinearOpMode opMode;
 
@@ -38,17 +39,20 @@ public class LiftPrototype {
         this.operator = operator;
         this.opMode = opMode;
         liftMotor = hardwareMap.dcMotor.get("liftMotor");
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     public void controlLift(){
-        liftMotor.setPower(operator.getRightY()/4);
+        liftMotor.setPower(operator.getRightY()/2);
         operator.readButtons();
         if(operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
             goToJunc(Junction.Ground);
-        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
+        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
             goToJunc(Junction.Low);
-        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
-            goToJunc(Junction.Mid);
+//        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
+//            goToJunc(Junction.Mid);
         //else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
         //goToJunc(Junction.High);
     }

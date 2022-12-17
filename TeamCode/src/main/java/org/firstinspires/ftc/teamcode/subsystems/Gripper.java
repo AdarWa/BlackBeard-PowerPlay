@@ -16,7 +16,7 @@ public class Gripper {
     }
 
     public void update(){
-        servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 1 : 0);
+        servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.7 : 1);
     }
 
 }

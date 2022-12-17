@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
-import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
+//import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.FlipIntake;
@@ -40,11 +40,11 @@ public class PowerPlayOpMode extends LinearOpMode {
 
     private IntakePrototype1 intake;
 
-    private FlipIntake flipIntake;
-
     private LiftPrototype lift;
 
     private SampleMecanumDrive roadrunner;
+
+    private IMU imu;
 
 
 
@@ -64,35 +64,38 @@ public class PowerPlayOpMode extends LinearOpMode {
 
         driver = new GamepadEx(gamepad1); //declare the driver
         operator = new GamepadEx(gamepad2); //declare the operator
-
-        roadrunner = new SampleMecanumDrive(hardwareMap, false, false,
-                (DcMotorEx) frontLeft.motor,(DcMotorEx)frontRight.motor,(DcMotorEx)backLeft.motor,(DcMotorEx)backRight.motor);
+        imu = new IMU(hardwareMap);
+//        roadrunner = new SampleMecanumDrive(hardwareMap, false, false,
+//                (DcMotorEx) frontLeft.motor,(DcMotorEx)frontRight.motor,(DcMotorEx)backLeft.motor,(DcMotorEx)backRight.motor);
         drive = new Drive(driver,telemetry,frontLeft,frontRight,backLeft,backRight);
-        roadrunner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        roadrunner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 //
 //        intake = new IntakePrototype1(intakeServo1, intakeServo2, operator);
 
 //        flipIntake = new FlipIntake(operator, hardwareMap);
 
-//        lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
-//        Gripper gripper = new Gripper(operator, hardwareMap);
+        lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
+        Gripper gripper = new Gripper(operator, hardwareMap);
         waitForStart(); //wait until the driver press "Start"
 
 
         while(opModeIsActive()){
-            roadrunner.update();
-            Pose2d point = roadrunner.getPoseEstimate();
-            double heading = Math.toDegrees(point.getHeading());
-            drive.update(heading); //drive using the joystick
-            LiftPrototype.Junction autoLiftJunc = AutoLiftController.checkHeading(
-                    AutoLiftController.checkPose2d(point)
-                    ,point, heading, telemetry);
+//            roadrunner.update();
+//            Pose2d point = roadrunner.getPoseEstimate();
+//            double heading = Math.toDegrees(point.getHeading());
+            telemetry.addData("CurrentPos", lift.liftMotor.getCurrentPosition());
+            drive.update(imu.getHeading()); //drive using the joystick
+            lift.controlLift();
+            gripper.update();
+//            LiftPrototype.Junction autoLiftJunc = AutoLiftController.checkHeading(
+//                    AutoLiftController.checkPose2d(point)
+//                    ,point, heading, telemetry);
 
-            telemetry.addData("Lift", autoLiftJunc.toString());
-            telemetry.addData("Heading1", heading);
-            telemetry.addData("x", point.getX());
-            telemetry.addData("y", point.getY());
+//            telemetry.addData("Lift", autoLiftJunc.toString());
+//            telemetry.addData("Heading1", heading);
+//            telemetry.addData("x", point.getX());
+//            telemetry.addData("y", point.getY());
 //            telemetry.update();
 //            roadrunner.update();
 //            Pose2d pos = roadrunner.getPoseEstimate();
