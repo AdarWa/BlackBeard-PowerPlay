@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Gripper {
-
+    private boolean gripperState = false;
     GamepadEx operator;
     Servo servo;
 
@@ -16,7 +16,10 @@ public class Gripper {
     }
 
     public void update(){
-        servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.7 : 1);
+//        operator.readButtons();
+//        if(operator.wasJustPressed(GamepadKeys.Button.A))
+//            gripperState = !gripperState;
+        servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.4 : 1);
     }
 
 }

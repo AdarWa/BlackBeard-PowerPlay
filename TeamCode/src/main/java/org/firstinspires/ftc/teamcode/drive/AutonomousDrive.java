@@ -35,24 +35,33 @@ public class AutonomousDrive {
      * drive without roadrunner
      */
     public static void drive(MotorController controller, int parkSpot, AutoBasic autoType){
-
+        if(parkSpot == 2){
+//            controller.strafeLeft(10, 0.3);
+            controller.forward(95, 0.3);
+        }else if(parkSpot == 1){
+            controller.strafeLeft(190, 0.3);
+            controller.forward(95, 0.3);
+        }
     }
 
     private static TrajectorySequence driveByParkSpot(RoadRunnerDrive drive, int parkSpot, AutoBasic autoType){
         int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
         TrajectorySequenceBuilder sqeuence = drive.drive.trajectorySequenceBuilder(new Pose2d(-61, -34 * multiplier));
 
-        sqeuence = sqeuence.strafeRight(Utils.cmToInch(52))
-                .forward(Utils.cmToInch(137))
-                .strafeLeft(Utils.cmToInch(85)).waitSeconds(4);
+//        sqeuence = sqeuence.strafeRight(Utils.cmToInch(52))
+//                .forward(Utils.cmToInch(137))
+//                .strafeLeft(Utils.cmToInch(85)).waitSeconds(4);
 
-        if(parkSpot == 2)
-            sqeuence = sqeuence.strafeRight(Utils.cmToInch(30));
-        else if(parkSpot == 1)
+        if(parkSpot == 2){
+            sqeuence = sqeuence
+                    .forward(Utils.cmToInch(1));
+        }
+        else if(parkSpot == 1) {
             sqeuence = sqeuence.strafeLeft(Utils.cmToInch(30));
-        else  if(parkSpot == 3)
+        }
+        else  if(parkSpot == 3) {
             sqeuence = sqeuence.strafeRight(Utils.cmToInch(90));
-
+        }
         return sqeuence.build();
     }
 }

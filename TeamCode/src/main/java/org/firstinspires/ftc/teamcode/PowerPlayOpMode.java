@@ -46,6 +46,13 @@ public class PowerPlayOpMode extends LinearOpMode {
 
     private IMU imu;
 
+    public void stopAll(){
+        frontLeft.set(0);
+        frontRight.set(0);
+        backLeft.set(0);
+        backRight.set(0);
+    }
+
 
 
     @Override

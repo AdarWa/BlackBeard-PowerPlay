@@ -78,7 +78,7 @@ public class AutonomousOpMode {
     private AutoBasic autoType;
     private LinearOpMode opMode;
 
-    private static final boolean useRoadRunner = true;
+    private static final boolean useRoadRunner = false;
     private static final boolean onlyDetect = false;
 
     public AutonomousOpMode(LinearOpMode opMode, AutoBasic autoType){
