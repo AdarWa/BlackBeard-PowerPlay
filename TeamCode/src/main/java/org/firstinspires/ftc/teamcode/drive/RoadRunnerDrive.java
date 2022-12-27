@@ -12,7 +12,7 @@ public class RoadRunnerDrive {
     private static final Pose2d startPosition = new Pose2d(0,0,0);
 
     public RoadRunnerDrive(HardwareMap hardwareMap){
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap, true, true);
     }
 
     public Pose2d getLastPosition(){

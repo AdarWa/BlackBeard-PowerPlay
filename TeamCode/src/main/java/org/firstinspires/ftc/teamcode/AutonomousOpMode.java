@@ -80,7 +80,7 @@ public class AutonomousOpMode {
     private LinearOpMode opMode;
     private IMU imu;
 
-    private static final boolean useRoadRunner = false;
+    private static final boolean useRoadRunner = true;
     private static final boolean onlyDetect = false;
 
     public AutonomousOpMode(LinearOpMode opMode, AutoBasic autoType){
