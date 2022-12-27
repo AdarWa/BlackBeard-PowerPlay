@@ -44,7 +44,7 @@ public class Drive {
         changePowerByRightBumper();
         changeModeByLeftBumper();
 
-        if(mode == DriveMode.JokerDrive)
+//        if(mode == DriveMode.JokerDrive)
 
 
         if(mode == DriveMode.JokerDrive) {
@@ -79,9 +79,10 @@ public class Drive {
         if(driver.isDown(GamepadKeys.Button.LEFT_BUMPER))
             powerMultiplier = 0.9;
         else if(driver.isDown(GamepadKeys.Button.RIGHT_BUMPER))
-            powerMultiplier = 0.2;
+            powerMultiplier = 0.29;
         else
-            powerMultiplier = 0.65;
+            powerMultiplier = 0.5;
+
     }
 
     private void changeModeByLeftBumper(){

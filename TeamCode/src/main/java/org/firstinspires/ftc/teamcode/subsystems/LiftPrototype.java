@@ -48,9 +48,13 @@ public class LiftPrototype {
     }
 
     public void controlLift(){
+//        if(!liftMotor.isBusy()){
+//            liftMotor.setPower(0);
+//            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        }
         double power = -operator.getRightY();
-        if((power < 0 && liftMotor.getCurrentPosition() < -500) || (power >= 0 && liftMotor.getCurrentPosition() > -5200) || power == 0)
-            liftMotor.setPower(-power/(operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 1 : 2));
+        if((power < 0 && liftMotor.getCurrentPosition() < 0) || (power >= 0 && liftMotor.getCurrentPosition() > -5700) || power == 0)
+            liftMotor.setPower(-power/(operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 2 : 1));
         if(operator.getButton(GamepadKeys.Button.Y)){
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -80,6 +84,7 @@ public class LiftPrototype {
                 debug("Pos", String.valueOf(liftMotor.getCurrentPosition()));
 
             }
+            debug("Debug", "Debug");
 
             liftMotor.setPower(0);
             liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

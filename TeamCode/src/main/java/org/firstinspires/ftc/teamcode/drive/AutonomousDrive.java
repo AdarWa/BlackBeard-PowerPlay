@@ -35,12 +35,15 @@ public class AutonomousDrive {
      * drive without roadrunner
      */
     public static void drive(MotorController controller, int parkSpot, AutoBasic autoType){
+        int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
         if(parkSpot == 2){
-//            controller.strafeLeft(10, 0.3);
-            controller.forward(95, 0.3);
+            controller.forward(0.8, 0.5);
         }else if(parkSpot == 1){
-            controller.strafeLeft(190, 0.3);
-            controller.forward(95, 0.3);
+            controller.strafeLeft(1.2*multiplier, 0.3);
+            controller.forward(0.8, 0.5);
+        }else if(parkSpot == 3){
+            controller.strafeRight(1.2*multiplier, 0.3);
+            controller.forward(0.8, 0.5);
         }
     }
 

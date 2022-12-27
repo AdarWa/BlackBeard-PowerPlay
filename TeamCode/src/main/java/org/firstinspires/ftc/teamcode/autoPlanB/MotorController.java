@@ -23,6 +23,9 @@ public class MotorController {
         for(DcMotor m : motors){
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
+        motors[2].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motors[3].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
 //    for (int i = 0; i < motors.length; i+=2) {
@@ -30,77 +33,48 @@ public class MotorController {
 //    }
 
     public void forward(double cm, double power){
-        for(DcMotor motor : motors){
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            motor.setTargetPosition((int)(cm * ticksPerCm));
-
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            motor.setPower(power);
+        for(DcMotor m : motors){
+            m.setPower(power);
         }
-        for (DcMotor motor : motors) {
-            while (motor.isBusy()) {
-                opMode.idle();
-            }
+        sleep(cm);
+        for(DcMotor m : motors){
+            m.setPower(0);
         }
     }
+
+    private void sleep(double sec){
+        try {
+            Thread.sleep((long)(sec*1000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public void backward(double cm, double power){
-        for(DcMotor motor : motors){
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            motor.setTargetPosition((int)(cm * ticksPerCm));
-
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            motor.setPower(-power);
-        }
-        for (DcMotor motor : motors) {
-            while (motor.isBusy()) {
-                opMode.idle();
-            }
-        }
     }
 
     public void strafeLeft(double cm, double power){
-        for(DcMotor motor : motors){
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            motor.setTargetPosition((int)(cm * ticksPerCm));
-
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        }
         motors[1].setPower(power);
         motors[3].setPower(-power);
         motors[0].setPower(-power);
         motors[2].setPower(power);
-        for (DcMotor motor : motors) {
-            while (motor.isBusy()) {
-                opMode.idle();
-            }
+        sleep(cm);
+        for(DcMotor m : motors){
+            m.setPower(0);
         }
     }
 
     public void strafeRight(double cm, double power){
-        for(DcMotor motor : motors){
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            motor.setTargetPosition((int)(cm * ticksPerCm));
-
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        }
         motors[1].setPower(-power);
         motors[3].setPower(power);
         motors[0].setPower(power);
         motors[2].setPower(-power);
-        for (DcMotor motor : motors) {
-            while (motor.isBusy()) {
-                opMode.idle();
-            }
+        sleep(cm);
+        for(DcMotor m : motors){
+            m.setPower(0);
         }
     }
 

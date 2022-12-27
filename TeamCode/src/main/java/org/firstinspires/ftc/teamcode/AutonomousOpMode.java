@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TeleOpDrive.HeadingStorage;
+import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 import org.firstinspires.ftc.teamcode.autoPlanB.MotorController;
 import org.firstinspires.ftc.teamcode.drive.AutonomousDrive;
 import org.firstinspires.ftc.teamcode.drive.RoadRunnerDrive;
@@ -77,6 +78,7 @@ public class AutonomousOpMode {
 
     private AutoBasic autoType;
     private LinearOpMode opMode;
+    private IMU imu;
 
     private static final boolean useRoadRunner = false;
     private static final boolean onlyDetect = false;
@@ -91,6 +93,8 @@ public class AutonomousOpMode {
         debug("Status", "Initialized");
 
         runtime.reset();
+
+        imu = new IMU(opMode.hardwareMap);
 
         if(useRoadRunner && !onlyDetect){
             drive = new RoadRunnerDrive(opMode.hardwareMap);
@@ -114,7 +118,7 @@ public class AutonomousOpMode {
         }else if(!onlyDetect){
             AutonomousDrive.drive(controller, parkSpot, autoType);
         }
-        HeadingStorage.heading = Math.toDegrees(drive.drive.getExternalHeading());
+        HeadingStorage.heading = imu.getHeading();
     }
 
     private void recognizeParkSpot(){
