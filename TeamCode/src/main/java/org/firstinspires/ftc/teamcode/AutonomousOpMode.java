@@ -37,12 +37,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.HeadingStorage;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 import org.firstinspires.ftc.teamcode.autoPlanB.MotorController;
 import org.firstinspires.ftc.teamcode.drive.AutonomousDrive;
 import org.firstinspires.ftc.teamcode.drive.RoadRunnerDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Gripper;
+import org.firstinspires.ftc.teamcode.subsystems.LiftPrototype;
 import org.firstinspires.ftc.teamcode.vision.aprilTags.AprilTagDetector;
 import org.firstinspires.ftc.teamcode.vision.colorDetection.ColorDetector;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -79,6 +82,9 @@ public class AutonomousOpMode {
     private AutoBasic autoType;
     private LinearOpMode opMode;
     private IMU imu;
+    private Gripper gripper;
+    private LiftPrototype lift;
+    public static Telemetry _telemetry = null;
 
     private static final boolean useRoadRunner = true;
     private static final boolean onlyDetect = false;
@@ -90,6 +96,7 @@ public class AutonomousOpMode {
 
 
     public void runOpMode() {
+        _telemetry = opMode.telemetry;
         debug("Status", "Initialized");
 
         runtime.reset();
@@ -98,23 +105,25 @@ public class AutonomousOpMode {
 
         if(useRoadRunner && !onlyDetect){
             drive = new RoadRunnerDrive(opMode.hardwareMap);
-        }else if(!onlyDetect){
+            gripper = new Gripper(null, opMode.hardwareMap);
+            lift = new LiftPrototype(null,opMode.hardwareMap, null);
+        }else if(!onlyDetect) {
             controller = new MotorController(
                     new DcMotor[]{
                             opMode.hardwareMap.dcMotor.get("frontLeft"),
                             opMode.hardwareMap.dcMotor.get("frontRight"),
                             opMode.hardwareMap.dcMotor.get("backLeft"),
                             opMode.hardwareMap.dcMotor.get("backRight")
-            },opMode);
+                    }, opMode);
         }
         aprilDetector = new AprilTagDetector(opMode.hardwareMap, opMode.telemetry);
         aprilDetector.startCamera();
-
+        gripper.grip();
         recognizeParkSpot();
         opMode.waitForStart();
 
         if(useRoadRunner && !onlyDetect){
-            AutonomousDrive.drive(drive, parkSpot, autoType);
+            AutonomousDrive.drive(drive, parkSpot, autoType, gripper, lift);
         }else if(!onlyDetect){
             AutonomousDrive.drive(controller, parkSpot, autoType);
         }

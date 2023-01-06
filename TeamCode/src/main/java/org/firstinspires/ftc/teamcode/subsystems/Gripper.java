@@ -22,4 +22,11 @@ public class Gripper {
         servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.4 : 1);
     }
 
+    public void ungrip(){
+        servo.setPosition(0.4);
+    }
+    public void grip(){
+        servo.setPosition(1);
+    }
+
 }

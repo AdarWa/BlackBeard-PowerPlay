@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.TeleOpDrive.AllianceColor;
+import org.firstinspires.ftc.teamcode.TeleOpDrive.AutoGrip;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
 //import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
@@ -84,6 +86,7 @@ public class PowerPlayOpMode extends LinearOpMode {
 
         lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
         Gripper gripper = new Gripper(operator, hardwareMap);
+        AutoGrip autoGrip = new AutoGrip(AllianceColor.RED, hardwareMap, gripper,telemetry);
         waitForStart(); //wait until the driver press "Start"
 
 
@@ -95,6 +98,7 @@ public class PowerPlayOpMode extends LinearOpMode {
             drive.update(imu.getHeading()); //drive using the joystick
             lift.controlLift();
             gripper.update();
+//            autoGrip.detect();
 //            LiftPrototype.Junction autoLiftJunc = AutoLiftController.checkHeading(
 //                    AutoLiftController.checkPose2d(point)
 //                    ,point, heading, telemetry);
