@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -63,6 +64,8 @@ public class PowerPlayOpMode extends LinearOpMode {
         frontRight = new Motor(hardwareMap,"frontRight"); //declare the front right motor using the hardware map
         backLeft = new Motor(hardwareMap,"backLeft"); //declare the back left motor using the hardware map
         backRight = new Motor(hardwareMap,"backRight"); //declare the back right motor using the hardware map
+        
+
 
 //        roadrunner = new SampleMecanumDrive(hardwareMap, false);
 //        roadrunner.setPoseEstimate(new Pose2d(0,0));
@@ -95,7 +98,8 @@ public class PowerPlayOpMode extends LinearOpMode {
 //            Pose2d point = roadrunner.getPoseEstimate();
 //            double heading = Math.toDegrees(point.getHeading());
             telemetry.addData("CurrentPos", lift.liftMotor.getCurrentPosition());
-            drive.update(imu.getHeading()); //drive using the joystick
+            drive.update(imu.getHeading()); //drive using the joystinck
+//            new Thread(lift::controlLift).start();
             lift.controlLift();
             gripper.update();
 //            autoGrip.detect();
@@ -118,5 +122,9 @@ public class PowerPlayOpMode extends LinearOpMode {
 //            gripper.update();
         }
 
+    }
+
+    public void updateDrive(){
+        drive.update(imu.getHeading());
     }
 }
