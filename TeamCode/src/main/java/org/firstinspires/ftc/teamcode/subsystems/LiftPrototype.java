@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -16,10 +14,9 @@ public class LiftPrototype {
 
     public enum Junction{
         Ground(0),
-        Low(1069),
-        Mid(1757),
-        High(2494),
-        Stack1(356);
+        Low(677),
+        Mid(1100),
+        High(1535);
 
         private int i;
 
@@ -40,11 +37,11 @@ public class LiftPrototype {
 
 
 
+
     public LiftPrototype(GamepadEx operator, HardwareMap  hardwareMap, PowerPlayOpMode opMode){
         this.operator = operator;
         this.opMode = opMode;
         liftMotor = hardwareMap.dcMotor.get("liftMotor");
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -56,26 +53,29 @@ public class LiftPrototype {
 //            liftMotor.setPower(0);
 //            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        }
-//        if(threadInt){
-//            threadInt = false;
-//            stopAfterEncoders();
-//        }
-        double power = -operator.getLeftY();
+        if(threadInt){
+            threadInt = false;
+            stopAfterEncoders();
+        }
+        double power = operator.getRightY();
 //        if((power < 0 && liftMotor.getCurrentPosition() < 0) || (power >= 0 && liftMotor.getCurrentPosition() > -5700) || power == 0)
             liftMotor.setPower(-power/(operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 2 : 1));
-//        if(operator.getButton(GamepadKeys.Button.Y)){
-//        if (liftMotor.setMode(DcMotor.DPAD_RIGHT))
+        if(operator.getButton(GamepadKeys.Button.Y)){
+            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        operator.readButtons();
         if(operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
             goToJunc(Junction.Ground);
-        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
+        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT) || operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
             goToJunc(Junction.Low);
-        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
+        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
             goToJunc(Junction.Mid);
         else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
             goToJunc(Junction.High);
     }
 
-    public void goToJunc(Junction junction, Gripper gripper){
+    public void goToJunc(Junction junction){
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         debug("JuncState", junction.name());
         liftMotor.setTargetPosition(junction.getTicks());
@@ -83,20 +83,18 @@ public class LiftPrototype {
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 //        new Thread(() -> {
-        while (liftMotor.isBusy()) {
-//            if(opMode != null)
-//                opMode.updateDrive();
-            if(gripper != null){
-                gripper.grip();
-            }
-            debug("Pos", String.valueOf(liftMotor.getCurrentPosition()));
-            if(operator != null){
-                if(operator.getButton(GamepadKeys.Button.BACK)){
-                    break;
+            while (liftMotor.isBusy()) {
+                if(opMode != null)
+                    opMode.stopAll();
+
+                debug("Pos", String.valueOf(liftMotor.getCurrentPosition()));
+                if(operator != null){
+                   if(operator.getButton(GamepadKeys.Button.BACK)){
+                       break;
+                   }
                 }
             }
-        }
-        stopAfterEncoders();
+            stopAfterEncoders();
 //            threadInt = true;
 //        }).start();
     }
@@ -104,12 +102,7 @@ public class LiftPrototype {
         debug("Debug", "Debug");
 
         liftMotor.setPower(0);
-        Log.e("Lift", "Got Here!");
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    public void goToJunc(Junction junction){
-        goToJunc(junction, null);
     }
 
     private void debug(String caption, String data){

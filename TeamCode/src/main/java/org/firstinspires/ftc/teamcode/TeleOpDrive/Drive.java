@@ -79,7 +79,7 @@ public class Drive {
         if(driver.isDown(GamepadKeys.Button.LEFT_BUMPER))
             powerMultiplier = 0.9;
         else if(driver.isDown(GamepadKeys.Button.RIGHT_BUMPER))
-            powerMultiplier = 0.39;
+            powerMultiplier = 0.29;
         else
             powerMultiplier = 0.5;
 

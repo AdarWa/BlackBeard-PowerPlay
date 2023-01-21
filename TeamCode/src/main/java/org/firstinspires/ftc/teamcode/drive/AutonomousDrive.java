@@ -52,148 +52,25 @@ public class AutonomousDrive {
 
     private static void driveByParkSpot(RoadRunnerDrive drive, int parkSpot, AutoBasic autoType, Gripper gripper, LiftPrototype lift){
         int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        lift.goToJunc(LiftPrototype.Junction.Low, gripper);
-        gripper.grip();
-        TrajectorySequenceBuilder sequence = drive.drive.trajectorySequenceBuilder(new Pose2d());
-        TrajectorySequence s1 = sequence.strafeLeft(Utils.cmToInch(22))
-                .forward(Utils.tileToInch(0.5))
-//                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
-//                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
-//                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
-//                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
-                .forward(Utils.tileToInch(0.3))
-                .back(Utils.tileToInch(0.3))
-//                .forward(Utils.tileToInch(0.5))
-//                .forward(Utils.tileToInch(0.5))
-
-//                .back(Utils.tileToInch(0.5))
-//                .back(Utils.tileToInch(0.5))
-
-//                .waitSeconds(0.3)
-                //move 2.5 tiles
-                .turn(Math.toRadians(47))
+        Trajectory trajectory = drive.drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(Utils.cmToInch(22))
+                        .build();
+        drive.drive.followTrajectory(trajectory);
+        trajectory = drive.drive.trajectoryBuilder(new Pose2d())
+                .forward(Utils.tileToInch(2.5)).build();
+        drive.drive.followTrajectory(trajectory);
+        drive.drive.turn(Math.toRadians(53));
+//        trajectory = drive.drive.trajectoryBuilder(new Pose2d())
+//                .forward(Utils.cmToInch(20)).build();
+//        drive.drive.followTrajectory(trajectory);
+        lift.goToJunc(LiftPrototype.Junction.High);
+        drive.drive.setExternalHeading(0);
+        trajectory = drive.drive.trajectoryBuilder(trajectory.end(),Math.toRadians(0))
+                .forward(Utils.cmToInch(40))
                 .build();
-
-        drive.drive.followTrajectorySequence(s1);
-        lift.goToJunc(LiftPrototype.Junction.High,gripper);
-        sequence = drive.drive.trajectorySequenceBuilder(s1.end());
-//        gripper.grip();
-        gripper.grip();
-        TrajectorySequence s2 = sequence.forward(Utils.cmToInch(23)).build();
-        drive.drive.followTrajectorySequence(s2);
-//        lift.goToJunc(LiftPrototype.Junction.Low, gripper);
+        drive.drive.followTrajectory(trajectory);
+        lift.goToJunc(LiftPrototype.Junction.Mid);
         gripper.ungrip();
-        //go to stack
-
-        sequence = drive.drive.trajectorySequenceBuilder(s2.end());
-
-        TrajectorySequence s3 = sequence
-                .back(Utils.cmToInch(19)).build();
-
-        drive.drive.followTrajectorySequence(s3);
-
-//        lift.goToJunc(LiftPrototype.Junction.Low);
-
-        new Thread(()->lift.goToJunc(LiftPrototype.Junction.Stack1)).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s3.end());
-        TrajectorySequence s4 = sequence
-                .turn(Math.toRadians(-45))
-                .back(Utils.tileToInch(0.1))
-                .turn(Math.toRadians(-90))
-                .build();
-
-        drive.drive.followTrajectorySequence(s4);
-
-
-        sequence = drive.drive.trajectorySequenceBuilder(s4.end());
-        TrajectorySequence s5 = sequence
-                .forward(Utils.tileToInch(1.2))
-                .build();
-
-        drive.drive.followTrajectorySequence(s5);
-
-        gripper.grip();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-//        lift.goToJunc(LiftPrototype.Junction.Low);
-
-        new Thread(()->lift.goToJunc(LiftPrototype.Junction.High)).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s5.end());
-        TrajectorySequence s6 = sequence
-                .back(Utils.tileToInch(1.2))
-                .turn(Math.toRadians(122))
-//                .forward(Utils.tileToInch(0.1))
-//                .turn(Math.toRadians(35))
-                .build();
-
-        drive.drive.followTrajectorySequence(s6);
-//        new Thread(()->{
-//        }).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s6.end());
-
-        TrajectorySequence s7 = sequence
-                .forward(Utils.cmToInch(25))
-                .build();
-
-        drive.drive.followTrajectorySequence(s7);
-
-        gripper.ungrip();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s7.end());
-
-        TrajectorySequence s8 = sequence
-                .back(Utils.cmToInch(25))
-                .build();
-
-        drive.drive.followTrajectorySequence(s8);
-
-        new Thread(()->lift.goToJunc(LiftPrototype.Junction.Low)).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s8.end());
-        if(parkSpot == 2){
-            TrajectorySequence s9 = sequence
-                    .turn(Math.toRadians(-35))
-                    .back(Utils.tileToInch(0.8))
-                    .build();
-
-            drive.drive.followTrajectorySequence(s9);
-        }else if(parkSpot == 1){
-            TrajectorySequence s9 = sequence
-                    .turn(Math.toRadians(-35))
-//                    .back(Utils.tileToInch(0.3))
-                    .strafeLeft(Utils.tileToInch(1.2))
-                    .back(Utils.tileToInch(1))
-                    .build();
-
-            drive.drive.followTrajectorySequence(s9);
-        }else if(parkSpot == 3){
-            TrajectorySequence s9 = sequence
-                    .turn(Math.toRadians(-35))
-//                    .back(Utils.tileToInch(0.3))
-                    .strafeRight(Utils.tileToInch(1.2))
-                    .back(Utils.tileToInch(1))
-                    .build();
-
-            drive.drive.followTrajectorySequence(s9);
-        }
-
-
-
 //        TrajectorySequenceBuilder sqeuence = drive.drive.trajectorySequenceBuilder(new Pose2d());
 //
 //
