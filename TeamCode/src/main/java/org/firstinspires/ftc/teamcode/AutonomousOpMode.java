@@ -127,7 +127,7 @@ public class AutonomousOpMode {
         }else if(!onlyDetect){
             AutonomousDrive.drive(controller, parkSpot, autoType);
         }
-        HeadingStorage.heading = imu.getHeading();
+//        HeadingStorage.heading = imu.getHeading();
     }
 
     private void recognizeParkSpot(){
