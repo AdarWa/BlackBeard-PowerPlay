@@ -38,16 +38,16 @@ public class AutonomousDrive {
      * drive without roadrunner
      */
     public static void drive(MotorController controller, int parkSpot, AutoBasic autoType){
-        int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
-        if(parkSpot == 2){
-            controller.forward(0.8, 0.5);
-        }else if(parkSpot == 1){
-            controller.strafeLeft(1.2*multiplier, 0.3);
-            controller.forward(0.8, 0.5);
-        }else if(parkSpot == 3){
-            controller.strafeRight(1.2*multiplier, 0.3);
-            controller.forward(0.8, 0.5);
-        }
+//        int multiplier = autoType == AutoBasic.TO_RIGHT ? 1 : -1;
+//        if(parkSpot == 2){
+//            controller.forward(0.8, 0.5);
+//        }else if(parkSpot == 1){
+//            controller.strafeLeft(1.2*multiplier, 0.3);
+//            controller.forward(0.8, 0.5);
+//        }else if(parkSpot == 3){
+//            controller.strafeRight(1.2*multiplier, 0.3);
+//            controller.forward(0.8, 0.5);
+//        }
     }
 
     private static void driveByParkSpot(RoadRunnerDrive drive, int parkSpot, AutoBasic autoType, Gripper gripper, LiftPrototype lift){
@@ -57,121 +57,151 @@ public class AutonomousDrive {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        lift.goToJunc(LiftPrototype.Junction.Low, gripper);
-        gripper.grip();
-        TrajectorySequenceBuilder sequence = drive.drive.trajectorySequenceBuilder(new Pose2d());
-        TrajectorySequence s1 = sequence.strafeLeft(Utils.cmToInch(22))
-                .forward(Utils.tileToInch(0.5))
+        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()){
+            lift.goToJunc(LiftPrototype.Junction.Low, gripper);
+            gripper.grip();
+        }
+        TrajectorySequence s1 = null;
+        TrajectorySequenceBuilder sequence = null;
+        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+            sequence = drive.drive.trajectorySequenceBuilder(new Pose2d());
+            s1 = sequence.strafeLeft(Utils.cmToInch(22)* multiplier)
+                    .forward(Utils.tileToInch(0.5))
 //                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
+                    .forward(Utils.tileToInch(0.5))
 //                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
+                    .forward(Utils.tileToInch(0.5))
 //                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
+                    .forward(Utils.tileToInch(0.5))
 //                .waitSeconds(0.1)
-                .forward(Utils.tileToInch(0.5))
-                .forward(Utils.tileToInch(0.3))
-                .back(Utils.tileToInch(0.3))
+                    .forward(Utils.tileToInch(0.5))
+                    .forward(Utils.tileToInch(0.3))
+                    .back(Utils.tileToInch(0.3))
 //                .forward(Utils.tileToInch(0.5))
 //                .forward(Utils.tileToInch(0.5))
 
-//                .back(Utils.tileToInch(0.5))
+//                .back(Utils.tileToInchwq(0.5))
 //                .back(Utils.tileToInch(0.5))
 
 //                .waitSeconds(0.3)
-                //move 2.5 tiles
-                .turn(Math.toRadians(47))
-                .build();
-
-        drive.drive.followTrajectorySequence(s1);
-        lift.goToJunc(LiftPrototype.Junction.High,gripper);
-        sequence = drive.drive.trajectorySequenceBuilder(s1.end());
+                    //move 2.5 tiles
+                    .turn(Math.toRadians(38* multiplier))
+                    .build();
+        }
+        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+            drive.drive.followTrajectorySequence(s1);
+        }
+        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+            lift.goToJunc(LiftPrototype.Junction.High, gripper);
+            sequence = drive.drive.trajectorySequenceBuilder(s1.end());
+            gripper.grip();
+        }
 //        gripper.grip();
-        gripper.grip();
-        TrajectorySequence s2 = sequence.forward(Utils.cmToInch(23)).build();
-        drive.drive.followTrajectorySequence(s2);
+
+        TrajectorySequence s2 = null;
+        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+            s2 = sequence.forward(Utils.cmToInch(20)).build();
+            drive.drive.followTrajectorySequence(s2);
+        }
 //        lift.goToJunc(LiftPrototype.Junction.Low, gripper);
         gripper.ungrip();
         //go to stack
 
-        sequence = drive.drive.trajectorySequenceBuilder(s2.end());
-
-        TrajectorySequence s3 = sequence
-                .back(Utils.cmToInch(19)).build();
-
-        drive.drive.followTrajectorySequence(s3);
-
-//        lift.goToJunc(LiftPrototype.Junction.Low);
-
-        new Thread(()->lift.goToJunc(LiftPrototype.Junction.Stack1)).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s3.end());
-        TrajectorySequence s4 = sequence
-                .turn(Math.toRadians(-45))
-                .back(Utils.tileToInch(0.1))
-                .turn(Math.toRadians(-90))
-                .build();
-
-        drive.drive.followTrajectorySequence(s4);
-
-
-        sequence = drive.drive.trajectorySequenceBuilder(s4.end());
-        TrajectorySequence s5 = sequence
-                .forward(Utils.tileToInch(1.2))
-                .build();
-
-        drive.drive.followTrajectorySequence(s5);
-
-        gripper.grip();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-//        lift.goToJunc(LiftPrototype.Junction.Low);
-
-        new Thread(()->lift.goToJunc(LiftPrototype.Junction.High)).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s5.end());
-        TrajectorySequence s6 = sequence
-                .back(Utils.tileToInch(1.2))
-                .turn(Math.toRadians(122))
-//                .forward(Utils.tileToInch(0.1))
-//                .turn(Math.toRadians(35))
-                .build();
-
-        drive.drive.followTrajectorySequence(s6);
+//        sequence = drive.drive.trajectorySequenceBuilder(s2.end());
+//
+//        TrajectorySequence s3 = null;
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//           s3 = sequence
+//                    .back(Utils.cmToInch(18)).build();
+//            drive.drive.followTrajectorySequence(s3);
+//        }
+//
+//
+//
+////        lift.goToJunc(LiftPrototype.Junction.Low);
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//
+//            new Thread(() -> lift.goToJunc(LiftPrototype.Junction.Stack1)).start();
+//        }
+//        sequence = drive.drive.trajectorySequenceBuilder(s3.end());
+//        TrajectorySequence s4 = sequence
+//                .turn(Math.toRadians(-38* multiplier))
+//                .back(Utils.tileToInch(0.1))
+//                .turn(Math.toRadians(-90* multiplier))
+//                .build();
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//            drive.drive.followTrajectorySequence(s4);
+//        }
+//
+//
+//        sequence = drive.drive.trajectorySequenceBuilder(s4.end());
+//        TrajectorySequence s5 = sequence
+//                .forward(Utils.tileToInch(1.2)+ Utils.cmToInch(2))
+//                .build();
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//
+//            drive.drive.followTrajectorySequence(s5);
+//        }
+//        gripper.grip();
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+////        lift.goToJunc(LiftPrototype.Junction.Low);
+//
+//        sequence = drive.drive.trajectorySequenceBuilder(s5.end());
+//        TrajectorySequence s6 = sequence
+//                .back(Utils.tileToInch(1.2)+ Utils.cmToInch(2))
+//                .turn(Math.toRadians(113))
+////                .forward(Utils.tileToInch(0.1))
+////                .turn(Math.toRadians(35))
+//                .build();
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//
+//            new Thread(() -> lift.goToJunc(LiftPrototype.Junction.High)).start();
+//        }
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//
+//            drive.drive.followTrajectorySequence(s6);
+//        }
 //        new Thread(()->{
 //        }).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s6.end());
-
-        TrajectorySequence s7 = sequence
-                .forward(Utils.cmToInch(25))
-                .build();
-
-        drive.drive.followTrajectorySequence(s7);
-
-        gripper.ungrip();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s7.end());
-
-        TrajectorySequence s8 = sequence
-                .back(Utils.cmToInch(25))
-                .build();
-
-        drive.drive.followTrajectorySequence(s8);
-
-        new Thread(()->lift.goToJunc(LiftPrototype.Junction.Low)).start();
-
-        sequence = drive.drive.trajectorySequenceBuilder(s8.end());
+//
+//        sequence = drive.drive.trajectorySequenceBuilder(s6.end());
+//
+//        TrajectorySequence s7 = sequence
+//                .forward(Utils.cmToInch(16))
+//                .build();
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//
+//            drive.drive.followTrajectorySequence(s7);
+//        }
+//        gripper.ungrip();
+//
+//        sequence = drive.drive.trajectorySequenceBuilder(s7.end());
+//
+//        TrajectorySequence s8 = sequence
+//                .back(Utils.cmToInch(17))
+//                .build();
+//
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//
+//            drive.drive.followTrajectorySequence(s8);
+//        }
+//        if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+//
+//        }
+        sequence = drive.drive.trajectorySequenceBuilder(s2.end());
         if(parkSpot == 2){
             TrajectorySequence s9 = sequence
-                    .turn(Math.toRadians(-35))
+                    .turn(Math.toRadians(-32)* multiplier)
                     .back(Utils.tileToInch(0.8))
                     .build();
+            if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
 
-            drive.drive.followTrajectorySequence(s9);
+                drive.drive.followTrajectorySequence(s9);
+            }
         }else if(parkSpot == 1){
             TrajectorySequence s9 = sequence
                     .turn(Math.toRadians(-35))
@@ -179,18 +209,24 @@ public class AutonomousDrive {
                     .strafeLeft(Utils.tileToInch(1.2))
                     .back(Utils.tileToInch(1))
                     .build();
+            if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
 
-            drive.drive.followTrajectorySequence(s9);
+                drive.drive.followTrajectorySequence(s9);
+            }
         }else if(parkSpot == 3){
             TrajectorySequence s9 = sequence
-                    .turn(Math.toRadians(-35))
+                    .turn(Math.toRadians(-37))
 //                    .back(Utils.tileToInch(0.3))
                     .strafeRight(Utils.tileToInch(1.2))
                     .back(Utils.tileToInch(1))
                     .build();
+            if(!AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
 
-            drive.drive.followTrajectorySequence(s9);
+                drive.drive.followTrajectorySequence(s9);
+            }
         }
+        new Thread(() -> lift.goToJunc(LiftPrototype.Junction.Low)).start();
+
 
 
 

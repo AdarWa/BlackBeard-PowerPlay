@@ -80,7 +80,7 @@ public class AutonomousOpMode {
     private ColorDetector colorDetector;
 
     private AutoBasic autoType;
-    private LinearOpMode opMode;
+    private static LinearOpMode opMode;
     private IMU imu;
     private Gripper gripper;
     private LiftPrototype lift;
@@ -94,8 +94,18 @@ public class AutonomousOpMode {
         this.autoType = autoType;
     }
 
+    public static LinearOpMode getOpMode(){
+        return opMode;
+    }
+
+    public static boolean isFinished(){
+        return opMode.isStopRequested() || !opMode.opModeIsActive();
+    }
+
 
     public void runOpMode() {
+
+
         _telemetry = opMode.telemetry;
         debug("Status", "Initialized");
 
@@ -119,25 +129,38 @@ public class AutonomousOpMode {
         aprilDetector = new AprilTagDetector(opMode.hardwareMap, opMode.telemetry);
         aprilDetector.startCamera();
         gripper.grip();
+//        new Thread(()->{
+//            while(true){
+////                _telemetry.addData("Req", opMode.isStopRequested());
+////                _telemetry.addData("Foo", !opMode.opModeIsActive());
+////                _telemetry.update();
+//                if(!opMode.opModeIsActive() || opMode.isStopRequested()){
+//                    throw new NullPointerException("Foo");
+////                    _telemetry.addData("Foo", "Bar");
+////                    _telemetry.update();
+//                }
+//            }
+//        }).start();
         recognizeParkSpot();
         opMode.waitForStart();
 
-        if(useRoadRunner && !onlyDetect){
+        if(useRoadRunner && !onlyDetect&&!opMode.isStopRequested() && opMode.opModeIsActive()){
             AutonomousDrive.drive(drive, parkSpot, autoType, gripper, lift);
         }else if(!onlyDetect){
             AutonomousDrive.drive(controller, parkSpot, autoType);
         }
-//        HeadingStorage.heading = imu.getHeading();
+        HeadingStorage.heading = imu.getHeading();
+        opMode = null;
     }
 
     private void recognizeParkSpot(){
         debug("ParkSpotDetection", "AprilTags");
-        while(!opMode.isStopRequested() && !opMode.isStarted()){
+        while(!opMode.isStopRequested()  && !opMode.isStarted()){
             detectAprilTag();
         }
         runtime.reset();
         if(parkSpot == null){
-            while (!opMode.isStopRequested() && (runtime.time(TimeUnit.SECONDS) < 5 )){
+            while (!opMode.isStopRequested() && opMode.opModeIsActive() && (runtime.time(TimeUnit.SECONDS) < 5 )){
                 detectAprilTag();
             }
         }

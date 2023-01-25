@@ -10,16 +10,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.PowerPlayOpMode;
 
 public class LiftPrototype {
 
     public enum Junction{
         Ground(0),
-        Low(1069),
+        Low(1000),
         Mid(1757),
-        High(2494),
-        Stack1(356);
+        High(2548),
+        Stack1(380);
 
         private int i;
 
@@ -65,14 +66,14 @@ public class LiftPrototype {
             liftMotor.setPower(-power/(operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 2 : 1));
 //        if(operator.getButton(GamepadKeys.Button.Y)){
 //        if (liftMotor.setMode(DcMotor.DPAD_RIGHT))
-        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
-            goToJunc(Junction.Ground);
-        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
-            goToJunc(Junction.Low);
-        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
-            goToJunc(Junction.Mid);
-        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
-            goToJunc(Junction.High);
+//        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+//            goToJunc(Junction.Ground);
+//        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
+//            goToJunc(Junction.Low);
+//        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
+//            goToJunc(Junction.Mid);
+//        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+//            goToJunc(Junction.High);
     }
 
     public void goToJunc(Junction junction, Gripper gripper){
@@ -83,9 +84,13 @@ public class LiftPrototype {
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 //        new Thread(() -> {
-        while (liftMotor.isBusy()) {
+        while (liftMotor.isBusy() &&  !AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
 //            if(opMode != null)
 //                opMode.updateDrive();
+            if(AutonomousOpMode.isFinished()){
+//                AutonomousOpMode.getOpMode().stop();
+                return;
+            }
             if(gripper != null){
                 gripper.grip();
             }
