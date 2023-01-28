@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.vision.Config;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -47,7 +48,7 @@ public class AprilTagDetector {
     private void init(HardwareMap hardwareMap,Telemetry telemetry, DetectorCalibration calibration){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, Config.barcodeCameraName), cameraMonitorViewId);
         this.calibration = calibration;
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(calibration.tagsize, calibration.fx, calibration.fy, calibration.cx, calibration.cy);
         this.telemetry = telemetry;
