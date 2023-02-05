@@ -15,11 +15,15 @@ public class Gripper {
         this.servo = map.servo.get("gripper");
     }
 
-    public void update(){
+    public void update(boolean autoGrip){
 //        operator.readButtons();
 //        if(operator.wasJustPressed(GamepadKeys.Button.A))
 //            gripperState = !gripperState;
-        servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.8 : 1);
+        if(!autoGrip){
+            servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.8 : 1);
+        }else if(operator.getButton(GamepadKeys.Button.A)){
+            servo.setPosition(0.8);
+        }
     }
 
     public void ungrip(){
@@ -27,6 +31,14 @@ public class Gripper {
     }
     public void grip(){
         servo.setPosition(1);
+    }
+
+    public void grip(boolean gripperState){
+        if(gripperState){
+            grip();
+        }else {
+            ungrip();
+        }
     }
 
 }

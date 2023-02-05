@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.TeleOpDrive;
 
+
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+import com.arcrobotics.ftclib.drivebase.RobotDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,6 +23,14 @@ public class Drive {
     private MecanumDrive drive;
     private GamepadEx driver;
     private Telemetry telemetry;
+
+    public static final double kDefaultRangeMin = -1.0;
+    public static final double kDefaultRangeMax = 1.0;
+    public static final double kDefaultMaxSpeed = 1.0;
+
+    protected static double rangeMin = kDefaultRangeMin;
+    protected static double rangeMax = kDefaultRangeMax;
+    protected static double maxOutput = kDefaultMaxSpeed;
 
     private double heading = 0;
 
@@ -73,6 +84,74 @@ public class Drive {
 //        telemetry.addData("Heading", heading);
 //        telemetry.update();
     }
+
+    public static double[] ourShabota(double strafeSpeed, double forwardSpeed,
+                                  double turnSpeed, double gyroAngle){
+        strafeSpeed = clipRange(strafeSpeed);
+        forwardSpeed = clipRange(forwardSpeed);
+        turnSpeed = clipRange(turnSpeed);
+
+        Vector2d input = new Vector2d(strafeSpeed, forwardSpeed);
+        input = input.rotateBy(-gyroAngle);
+
+        double theta = input.angle();
+
+        double[] wheelSpeeds = new double[4];
+        wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] = Math.sin(theta + Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = Math.sin(theta + Math.PI / 4);
+
+        normalize(wheelSpeeds, input.magnitude());
+
+        wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] += turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] -= turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] += turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] -= turnSpeed;
+
+        normalize(wheelSpeeds);
+        return wheelSpeeds;
+    }
+
+    public static double clipRange(double value) {
+        return value <= rangeMin ? rangeMin
+                : value >= rangeMax ? rangeMax
+                : value;
+    }
+
+    protected static void normalize(double[] wheelSpeeds, double magnitude) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        for (int i = 0; i < wheelSpeeds.length; i++) {
+            wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude) * magnitude;
+        }
+
+    }
+
+    /**
+     * Normalize the wheel speeds
+     */
+    protected static void normalize(double[] wheelSpeeds) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        if (maxMagnitude > 1) {
+            for (int i = 0; i < wheelSpeeds.length; i++) {
+                wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude);
+            }
+        }
+
+    }
+
 
 
     private void changePowerByRightBumper(){

@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.TeleOpDrive.AllianceColor;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.AutoGrip;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
 //import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
+import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.FlipIntake;
@@ -77,8 +78,8 @@ public class PowerPlayOpMode extends LinearOpMode {
         driver = new GamepadEx(gamepad1); //declare the driver
         operator = new GamepadEx(gamepad2); //declare the operator
         imu = new IMU(hardwareMap);
-//        roadrunner = new SampleMecanumDrive(hardwareMap, false, false,
-//                (DcMotorEx) frontLeft.motor,(DcMotorEx)frontRight.motor,(DcMotorEx)backLeft.motor,(DcMotorEx)backRight.motor);
+        roadrunner = new SampleMecanumDrive(hardwareMap, false, false,
+                (DcMotorEx) frontLeft.motor,(DcMotorEx)frontRight.motor,(DcMotorEx)backLeft.motor,(DcMotorEx)backRight.motor);
         drive = new Drive(driver,telemetry,frontLeft,frontRight,backLeft,backRight);
 //        roadrunner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -87,34 +88,34 @@ public class PowerPlayOpMode extends LinearOpMode {
 
 //        flipIntake = new FlipIntake(operator, hardwareMap);
 
-        lift = new LiftPrototype(operator, hardwareMap, this); //initialize the lift
+        lift = new LiftPrototype(operator, hardwareMap, null); //initialize the lift
         Gripper gripper = new Gripper(operator, hardwareMap);
-        AutoGrip autoGrip = new AutoGrip(AllianceColor.RED, hardwareMap, gripper,telemetry);
+//        AutoGrip autoGrip = new AutoGrip(AllianceColor.RED, hardwareMap, gripper,telemetry);
         waitForStart(); //wait until the driver press "Start"
 
 
         while(opModeIsActive()){
-//            roadrunner.update();
-//            Pose2d point = roadrunner.getPoseEstimate();
-//            double heading = Math.toDegrees(point.getHeading());
+            roadrunner.update();
+            Pose2d point = roadrunner.getPoseEstimate();
+            double heading = Math.toDegrees(point.getHeading());
             telemetry.addData("CurrentPos", lift.liftMotor.getCurrentPosition());
             drive.update(imu.getHeading()); //drive using the joystinck
 //            new Thread(lift::controlLift).start();
             lift.controlLift();
-            gripper.update();
+            gripper.update(false);
 //            autoGrip.detect();
-//            LiftPrototype.Junction autoLiftJunc = AutoLiftController.checkHeading(
-//                    AutoLiftController.checkPose2d(point)
-//                    ,point, heading, telemetry);
-
-//            telemetry.addData("Lift", autoLiftJunc.toString());
+            LiftPrototype.Junction autoLiftJunc = AutoLiftController.checkHeading(
+                    AutoLiftController.checkPose2d(point)
+                    ,point, heading, telemetry);
+//
+            telemetry.addData("Lift", autoLiftJunc.toString());
 //            telemetry.addData("Heading1", heading);
 //            telemetry.addData("x", point.getX());
 //            telemetry.addData("y", point.getY());
 //            telemetry.update();
-//            roadrunner.update();
-//            Pose2d pos = roadrunner.getPoseEstimate();
-//            telemetry.addData("pos", MathEx.roundOff(pos.getX(),100) + ","+ MathEx.roundOff(pos.getY(),100));
+            roadrunner.update();
+            Pose2d pos = roadrunner.getPoseEstimate();
+            telemetry.addData("pos", MathEx.roundOff(pos.getX(),100) + ","+ MathEx.roundOff(pos.getY(),100));
 //            telemetry.addData("lift", AutoLiftController.checkPose2d(pos).toString())
 //            intake.controlMechanism();
 //            flipIntake.intakeControl();

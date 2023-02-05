@@ -22,11 +22,15 @@ public class MotorTest extends LinearOpMode {
                 hardwareMap.dcMotor.get("frontLeft"),
                 hardwareMap.dcMotor.get("backLeft")
         };
+        DcMotor motor = hardwareMap.dcMotor.get("liftMotor");
         waitForStart();
         while (opModeIsActive()){
             for (int i = 0; i < motors.length; i++) {
                 telemetry.addData(names[i], motors[i].getPortNumber());
             }
+            telemetry.update();
+            motor.setPower(gamepad2.left_stick_y);
+            telemetry.addData("CurrentPos", motor.getCurrentPosition());
             telemetry.update();
 //            for(DcMotor motor : motors){
 //                motor.setPower(1);

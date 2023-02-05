@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AutonomousOpMode;
+import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.vision.aprilTags.AprilTagDetector;
 import org.firstinspires.ftc.teamcode.vision.colorDetection.ColorDetector;
 import org.opencv.core.Core;
@@ -24,18 +26,24 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp
 public class VisionTest extends LinearOpMode {
 
-    static class Pipeline extends OpenCvPipeline {
+    class Pipeline extends OpenCvPipeline {
+
+        public PoleDetection poleDetection = null;
+        public Pipeline(){
+            poleDetection = new PoleDetection();
+        }
 
 
         @Override
         public Mat processFrame(Mat input) {
-            return new PoleDetection().process(input);
+            return poleDetection.process(input, telemetry, gamepad1);
         }
     }
 
@@ -47,6 +55,7 @@ public class VisionTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, Config.gripperCameraName), cameraMonitorViewId);
+        Gripper gripper = new Gripper(new GamepadEx(gamepad1), hardwareMap);
         waitForStart();
         camera.setPipeline(new Pipeline());
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -65,6 +74,7 @@ public class VisionTest extends LinearOpMode {
         });
         FtcDashboard.getInstance().startCameraStream(camera, 0);
         while (opModeIsActive() && !isStopRequested()){
+            gripper.update(false);
             Point point =  PoleDetection.detectedCircle;
             telemetry.addData("centerPoint",point != null ? point.x + "," + point.y : "null");
             telemetry.update();

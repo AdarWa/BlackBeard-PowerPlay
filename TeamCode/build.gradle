@@ -21,6 +21,9 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+//    implementation 'junit:junit:4.12'
+//    implementation 'org.junit.jupiter:junit-jupiter'
+//    implementation 'org.junit.jupiter:junit-jupiter'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.ftclib.ftclib:core:2.0.1'
     implementation 'org.apache.commons:commons-math3:3.6.1'

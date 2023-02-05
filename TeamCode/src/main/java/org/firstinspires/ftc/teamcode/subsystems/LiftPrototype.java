@@ -10,17 +10,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.PowerPlayOpMode;
+import org.firstinspires.ftc.teamcode.drive.opmode.LocalizationTest;
 
 public class LiftPrototype {
 
     public enum Junction{
         Ground(0),
-        Low(1000),
+        AutoGrip(120),
+        Low(1069),
         Mid(1757),
-        High(2548),
-        Stack1(380);
+        High(2494),
+        Stack1(356);
 
         private int i;
 
@@ -37,7 +38,10 @@ public class LiftPrototype {
     public DcMotor liftMotor;
     private GamepadEx operator;
     private PowerPlayOpMode opMode;
-    private volatile boolean threadInt = false;
+    private volatile boolean justFinished = false;
+    private boolean goToJunc = true;
+    private double lastPower = 0;
+//    private volatile boolean threadInt = false;
 
 
 
@@ -53,55 +57,90 @@ public class LiftPrototype {
     }
 
     public void controlLift(){
+        double power = -operator.getLeftY();
+        LocalizationTest._telemetry.addData("busy", liftMotor.isBusy());
+        LocalizationTest._telemetry.addData("Pos", liftMotor.getCurrentPosition());
+        LocalizationTest._telemetry.addData("Mode", liftMotor.getMode().toString());
+        LocalizationTest._telemetry.addData("Joystick", power);
+        LocalizationTest._telemetry.addData("delta", Math.abs(Math.abs(liftMotor.getTargetPosition()) - Math.abs(liftMotor.getCurrentPosition())));
+
+//        if(Math.abs(Math.abs(liftMotor.getTargetPosition()) - Math.abs(liftMotor.getCurrentPosition())) <= 30) {
 //        if(!liftMotor.isBusy()){
-//            liftMotor.setPower(0);
-//            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            LocalizationTest._telemetry.addData("Good", "");
+//            if(justFinished){
+//                LocalizationTest._telemetry.addData("Good", "2");
+//
+//                justFinished = false;
+//                stopAfterEncoders();
+//            }
+////            liftMotor.setTargetPosition(liftMotor.getCurrentPosition());
+//            liftMotor.setPower(-power / (operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 2 : 1));
+//            liftMotor.setPower(-power);
+////            liftMotor.setPower(-power / (operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 2 : 1));
+//        }
+        LocalizationTest._telemetry.update();
+
+        if(power != 0 || (lastPower != 0 && power == 0)){
+            if(goToJunc){
+                goToJunc = false;
+                stopAfterEncoders();
+            }
+            liftMotor.setPower(-power / (operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 2 : 1));
+            lastPower = power;
+        }
+
+//        if(power != 0){
+//        }
 //        }
 //        if(threadInt){
 //            threadInt = false;
 //            stopAfterEncoders();
 //        }
-        double power = -operator.getLeftY();
 //        if((power < 0 && liftMotor.getCurrentPosition() < 0) || (power >= 0 && liftMotor.getCurrentPosition() > -5700) || power == 0)
-            liftMotor.setPower(-power/(operator.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 2 : 1));
 //        if(operator.getButton(GamepadKeys.Button.Y)){
 //        if (liftMotor.setMode(DcMotor.DPAD_RIGHT))
-//        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
-//            goToJunc(Junction.Ground);
-//        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
-//            goToJunc(Junction.Low);
-//        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
-//            goToJunc(Junction.Mid);
-//        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
-//            goToJunc(Junction.High);
+        operator.readButtons();
+        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_DOWN))
+            goToJunc(Junction.Ground, null, false);
+        if(operator.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT))
+            goToJunc(Junction.Low, null, false);
+        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_LEFT))
+            goToJunc(Junction.Mid, null, false);
+        else if(operator.wasJustPressed(GamepadKeys.Button.DPAD_UP))
+            goToJunc(Junction.High, null, false);
+        else if(operator.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER))
+            goToJunc(Junction.AutoGrip, null, false);
     }
 
     public void goToJunc(Junction junction, Gripper gripper){
+        goToJunc(junction, gripper, true);
+    }
+
+    public void goToJunc(Junction junction, Gripper gripper, boolean doWhile){
+        goToJunc = true;
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         debug("JuncState", junction.name());
         liftMotor.setTargetPosition(junction.getTicks());
         liftMotor.setPower(1);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        justFinished = true;
 //        new Thread(() -> {
-        while (liftMotor.isBusy() &&  !AutonomousOpMode.getOpMode().isStopRequested() && AutonomousOpMode.getOpMode().opModeIsActive()) {
+        if(doWhile){
+            while (liftMotor.isBusy()) {
 //            if(opMode != null)
 //                opMode.updateDrive();
-            if(AutonomousOpMode.isFinished()){
-//                AutonomousOpMode.getOpMode().stop();
-                return;
-            }
-            if(gripper != null){
-                gripper.grip();
-            }
-            debug("Pos", String.valueOf(liftMotor.getCurrentPosition()));
-            if(operator != null){
-                if(operator.getButton(GamepadKeys.Button.BACK)){
-                    break;
+                if(gripper != null){
+                    gripper.grip();
+                }
+                debug("Pos", String.valueOf(liftMotor.getCurrentPosition()));
+                if(operator != null){
+                    if(operator.getButton(GamepadKeys.Button.BACK)){
+                        break;
+                    }
                 }
             }
+            stopAfterEncoders();
         }
-        stopAfterEncoders();
 //            threadInt = true;
 //        }).start();
     }
@@ -109,12 +148,12 @@ public class LiftPrototype {
         debug("Debug", "Debug");
 
         liftMotor.setPower(0);
-        Log.e("Lift", "Got Here!");
+//        Log.e("Lift", "Got Here!");
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void goToJunc(Junction junction){
-        goToJunc(junction, null);
+        goToJunc(junction, null, false);
     }
 
     private void debug(String caption, String data){
