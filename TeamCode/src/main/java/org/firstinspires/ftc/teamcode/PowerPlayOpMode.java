@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.util.MathEx;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+//@TeleOp
 public class PowerPlayOpMode extends LinearOpMode {
 
 

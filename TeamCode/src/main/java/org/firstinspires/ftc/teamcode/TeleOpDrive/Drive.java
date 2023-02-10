@@ -9,7 +9,6 @@ import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 
 public class Drive {
 
@@ -64,13 +63,13 @@ public class Drive {
             telemetry.addData("forward", driver.getLeftY());
             telemetry.addData("turn", driver.getRightX());
             telemetry.addData("powerMultiplier", -powerMultiplier);
-            telemetry.addData("heading", HeadingStorage.heading);
+            telemetry.addData("heading", Storage.heading);
             telemetry.update();
             drive.driveFieldCentric(
                     driver.getLeftX() * -powerMultiplier, //strafe
                     driver.getLeftY() * -powerMultiplier, //forward
                     driver.getRightX() * -powerMultiplier, //turn
-                    heading + HeadingStorage.heading //angle
+                    heading + Storage.heading //angle
 
             );
         }else{

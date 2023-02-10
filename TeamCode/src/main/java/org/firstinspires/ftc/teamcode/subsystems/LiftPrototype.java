@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.PowerPlayOpMode;
 import org.firstinspires.ftc.teamcode.drive.opmode.LocalizationTest;
 
@@ -18,10 +20,10 @@ public class LiftPrototype {
     public enum Junction{
         Ground(0),
         AutoGrip(120),
-        Low(1069),
-        Mid(1757),
-        High(2494),
-        Stack1(356);
+        Low(681),
+        Mid(1089),
+        High(2010),
+        Stack1(524);
 
         private int i;
 
@@ -29,7 +31,7 @@ public class LiftPrototype {
             this.i = i;
         }
 
-        int getTicks(){
+        public int getTicks(){
             return i;
         }
     }
@@ -117,6 +119,10 @@ public class LiftPrototype {
     }
 
     public void goToJunc(Junction junction, Gripper gripper, boolean doWhile){
+        if(doWhile){
+            if(AutonomousOpMode.getOpMode().isStopRequested() || !AutonomousOpMode.getOpMode().opModeIsActive())
+                return;
+        }
         goToJunc = true;
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         debug("JuncState", junction.name());
@@ -126,7 +132,8 @@ public class LiftPrototype {
         justFinished = true;
 //        new Thread(() -> {
         if(doWhile){
-            while (liftMotor.isBusy()) {
+            ElapsedTime runtime = new ElapsedTime();
+            while (liftMotor.isBusy() && runtime.time() < 1.5) {
 //            if(opMode != null)
 //                opMode.updateDrive();
                 if(gripper != null){

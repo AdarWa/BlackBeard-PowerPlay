@@ -10,9 +10,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.AllianceColor;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.AutoGrip;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.Drive;
+import org.firstinspires.ftc.teamcode.TeleOpDrive.Storage;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.autoLift.AutoLiftController;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
@@ -36,8 +41,9 @@ public class LocalizationTest extends LinearOpMode {
     public static Telemetry _telemetry = null;
     private static double[] powers = null;
     private boolean cycleMode = false;
-    private boolean autoGripEnabled = true;
-    private boolean autoLiftEnabled = true;
+    private boolean autoGripEnabled = false;
+    private boolean autoLiftEnabled = false;
+    private boolean wasFalling = false;
 
     private void changePowerByRightBumper(){
         if(gamepad1.left_bumper)
@@ -72,12 +78,26 @@ public class LocalizationTest extends LinearOpMode {
 
         waitForStart();
 
-        drive.setPoseEstimate(new Pose2d(40, -64,Math.toRadians(90)));
+        drive.setPoseEstimate(Storage.pose);
         LiftPrototype.Junction lastJunc = null;
 
         while (!isStopRequested()) {
+            double fall = getFall(drive.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+            boolean isFallingBack = fall < 0;
+            boolean isFalling = isFallingBack ? fall < -5 : fall > 3.5;
+            telemetry.addData("fall", fall);
+            telemetry.addData("isFalling", isFalling);
+            if (isFalling) {
+                drive.setMotorPowers(isFallingBack ? 0 : 1, isFallingBack ? -1 : 0, isFallingBack ? -1 : 0, isFallingBack ? 0 : 1);
+                wasFalling = true;
+                continue;
+            } else if (wasFalling) {
+                wasFalling = false;
+                drive.setMotorPowers(0, 0, 0, 0);
+            }
+
             changePowerByRightBumper();
-            double[] powers = Drive.ourShabota(gamepad1.left_stick_x * powerMultiplier, -gamepad1.left_stick_y * powerMultiplier, gamepad1.right_stick_x * powerMultiplier, Math.toDegrees(drive.getExternalHeading())-90);
+            double[] powers = Drive.ourShabota(gamepad1.left_stick_x * powerMultiplier, -gamepad1.left_stick_y * powerMultiplier, gamepad1.right_stick_x * powerMultiplier, Math.toDegrees(drive.getExternalHeading())-90 + Storage.heading);
             LocalizationTest.powers = powers;
             drive.setMotorPowers(powers[RobotDrive.MotorType.kFrontLeft.value],
                     powers[RobotDrive.MotorType.kBackLeft.value],
@@ -97,6 +117,7 @@ public class LocalizationTest extends LinearOpMode {
                 autoGripEnabled = !autoGripEnabled;
                 operator.gamepad.rumble(700);
             }
+
 
             Pose2d poseEstimate = drive.getPoseEstimate();
 
@@ -123,14 +144,15 @@ public class LocalizationTest extends LinearOpMode {
                 }
             }
             telemetry.addData("lift", autoLiftJunc != null ? autoLiftJunc.toString() : "null");
-//            telemetry.addData("autoLift", autoLiftEnabled);
-//            telemetry.addData("autoGrip", autoGripEnabled);
-//            telemetry.addData("cycleMode", cycleMode);
+            telemetry.addData("autoLift", autoLiftEnabled);
+            telemetry.addData("autoGrip", autoGripEnabled);
+            telemetry.addData("cycleMode", cycleMode);
+
+            telemetry.addData("CurrentPos", lift.liftMotor.getCurrentPosition());
 //            telemetry.addData("wheel positions", Arrays.toString(drive.getWheelPositions().toArray()));
 //            telemetry.addData("x", poseEstimate.getX());
 //            telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", heading);
-            telemetry.update();
 
 //            gripper.update(true);
             if(autoGripEnabled){
@@ -140,5 +162,10 @@ public class LocalizationTest extends LinearOpMode {
             }
             lift.controlLift();
         }
+        telemetry.update();
+    }
+
+    private double getFall(Orientation angles){
+        return AngleUnit.DEGREES.normalize(angles.thirdAngle);
     }
 }

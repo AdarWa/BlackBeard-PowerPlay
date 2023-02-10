@@ -29,27 +29,24 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.TeleOpDrive.HeadingStorage;
+import org.firstinspires.ftc.teamcode.TeleOpDrive.Storage;
 import org.firstinspires.ftc.teamcode.TeleOpDrive.imu.IMU;
 import org.firstinspires.ftc.teamcode.autoPlanB.MotorController;
 import org.firstinspires.ftc.teamcode.drive.AutonomousDrive;
 import org.firstinspires.ftc.teamcode.drive.RoadRunnerDrive;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.LiftPrototype;
 import org.firstinspires.ftc.teamcode.vision.aprilTags.AprilTagDetector;
 import org.firstinspires.ftc.teamcode.vision.colorDetection.ColorDetector;
-import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.apriltag.AprilTagDetection;
 
+import java.util.AbstractMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -66,7 +63,6 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-
 public class AutonomousOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -85,6 +81,9 @@ public class AutonomousOpMode {
     private Gripper gripper;
     private LiftPrototype lift;
     public static Telemetry _telemetry = null;
+    private DistanceDetector distanceDetector;
+
+    public static double aprilTagXPose = 0;
 
     private static final boolean useRoadRunner = true;
     private static final boolean onlyDetect = false;
@@ -105,7 +104,6 @@ public class AutonomousOpMode {
 
     public void runOpMode() {
 
-
         _telemetry = opMode.telemetry;
         debug("Status", "Initialized");
 
@@ -117,6 +115,7 @@ public class AutonomousOpMode {
             drive = new RoadRunnerDrive(opMode.hardwareMap);
             gripper = new Gripper(null, opMode.hardwareMap);
             lift = new LiftPrototype(null,opMode.hardwareMap, null);
+            distanceDetector = new DistanceDetector(opMode.hardwareMap, _telemetry, drive.drive);
         }else if(!onlyDetect) {
             controller = new MotorController(
                     new DcMotor[]{
@@ -145,11 +144,13 @@ public class AutonomousOpMode {
         opMode.waitForStart();
 
         if(useRoadRunner && !onlyDetect&&!opMode.isStopRequested() && opMode.opModeIsActive()){
-            AutonomousDrive.drive(drive, parkSpot, autoType, gripper, lift);
+            AutonomousDrive.drive(drive, parkSpot, autoType, gripper, lift,distanceDetector);
         }else if(!onlyDetect){
             AutonomousDrive.drive(controller, parkSpot, autoType);
         }
-        HeadingStorage.heading = imu.getHeading();
+        Storage.heading = drive.drive.getExternalHeading();
+        Storage.pose = drive.drive.getPoseEstimate();
+        opMode.stop();
         opMode = null;
     }
 
@@ -189,9 +190,14 @@ public class AutonomousOpMode {
     }
 
     private void detectAprilTag(){
-        Integer spot = aprilDetector.detect();
+        AbstractMap.SimpleEntry<Integer, AprilTagDetection> entry = aprilDetector.detect();
+        Integer spot = entry.getKey();
+        AprilTagDetection detection = entry.getValue();
         if(spot != null){
             parkSpot = spot;
+            aprilTagXPose = detection.pose.x;
+            opMode.telemetry.addData("x", String.valueOf(aprilTagXPose));
+            opMode.telemetry.addData("xFix", -((AutonomousOpMode.aprilTagXPose-0.2)*AutonomousDrive.calibrationConst) + 28);
             debug("ParkSpot", String.valueOf(parkSpot));
         }
     }

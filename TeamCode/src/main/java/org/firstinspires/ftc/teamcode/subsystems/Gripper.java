@@ -20,14 +20,14 @@ public class Gripper {
 //        if(operator.wasJustPressed(GamepadKeys.Button.A))
 //            gripperState = !gripperState;
         if(!autoGrip){
-            servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.8 : 1);
+            servo.setPosition(operator.getButton(GamepadKeys.Button.A) ? 0.85 : 1);
         }else if(operator.getButton(GamepadKeys.Button.A)){
-            servo.setPosition(0.8);
+            servo.setPosition(0.85);
         }
     }
 
     public void ungrip(){
-        servo.setPosition(0.8);
+        servo.setPosition(0.85);
     }
     public void grip(){
         servo.setPosition(1);

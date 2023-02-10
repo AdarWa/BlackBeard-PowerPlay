@@ -47,7 +47,7 @@ public class AutoGrip {
             lift.goToJunc(LiftPrototype.Junction.AutoGrip);
             isLiftInQue = false;
         }
-        gripper.grip(operator.getButton(GamepadKeys.Button.A) ? false : detected);
+        gripper.grip(operator.getButton(GamepadKeys.Button.A) ? false : (!detected && lift.liftMotor.getCurrentPosition() > LiftPrototype.Junction.High.getTicks()/5) || detected);
         telemetry.addData("detectedSomethingUsingDistance",detected);
         telemetry.addData("distance", d);
         telemetry.update();

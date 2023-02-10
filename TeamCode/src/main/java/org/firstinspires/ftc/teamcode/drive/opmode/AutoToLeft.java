@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.AutoBasic;
 import org.firstinspires.ftc.teamcode.AutonomousOpMode;
 
-@Autonomous(name = "Autonomous To Left", group = "Autonomous", preselectTeleOp = "PowerPlayOpMode")
+@Autonomous(name = "Autonomous To Left", group = "Autonomous", preselectTeleOp = "LocalizationTest")
 public class AutoToLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

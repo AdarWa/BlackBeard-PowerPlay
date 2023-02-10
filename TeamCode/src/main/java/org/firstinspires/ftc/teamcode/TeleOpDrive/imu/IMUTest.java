@@ -35,12 +35,16 @@ public class IMUTest extends LinearOpMode
         while (opModeIsActive()) {
             angles =  imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             telemetry.addData("heading", getHeading(angles));
+            telemetry.addData("fall", getFall(angles));
             telemetry.update();
         }
     }
 
     private double getHeading(Orientation angles){
         return AngleUnit.DEGREES.normalize(angles.firstAngle);
+    }
+    private double getFall(Orientation angles){
+        return AngleUnit.DEGREES.normalize(angles.secondAngle);
     }
 }
 

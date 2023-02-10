@@ -11,6 +11,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 
 public class AprilTagDetector {
@@ -84,8 +85,9 @@ public class AprilTagDetector {
      * returns null if no aprilTag was detected.
      * @return the park spot.
      */
-    public Integer detect(){
+    public AbstractMap.SimpleEntry<Integer, AprilTagDetection> detect(){
         boolean parkDetected = false;
+        AprilTagDetection detection = null;
         int parkSpot = 0;
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -98,6 +100,7 @@ public class AprilTagDetector {
                     if(tag.id == tags[i])
                     {
                         parkSpot = i+1;
+                        detection = tag;
                         telemetry.addData("tag"+i, tags[i]);
                         parkDetected = true;
                     }
@@ -106,7 +109,7 @@ public class AprilTagDetector {
 
         }
 
-        return parkDetected ? parkSpot : null;
+        return new AbstractMap.SimpleEntry<>(parkDetected ? parkSpot : null, detection);
     }
 
     public static void setTags(int... t){
